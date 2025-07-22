@@ -1,0 +1,33 @@
+#tickerlist-table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 50%;
+}
+
+
+.tickerlist-td, .tickerlist-th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.tickerlist-table-action {
+    display: flex;
+    justify-content: space-around;
+}
+
+.tickerlist-th-action {
+    width: 10%;
+}
+
+.tickerlist-th-nom {
+    width: 20%;
+}
+
+.tickerlist-th-code {
+    width: 10%;
+}
+
+.tickerlist-th-actif {
+    width: 10%;
+}

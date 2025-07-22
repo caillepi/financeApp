@@ -1,0 +1,32 @@
+#navbar {
+    height: 75px;
+    display: flex;
+    flex-direction: row;
+    border-bottom: 2px solid black;
+}
+
+#navbar-title {
+    width: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 2em;
+    border-right: 1px solid black;
+}
+
+#navbar-items {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 70%;
+}
+
+.navbar-item {
+    padding: 10px;
+}
+
+.navbar-item:hover {
+    text-decoration: underline;
+}

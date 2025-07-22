@@ -1,0 +1,2 @@
+Ajout d'une API stateless
+Ajout d'un Contexte pour le ticker dans le front

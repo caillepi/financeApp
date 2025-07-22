@@ -1,0 +1,23 @@
+P1 - Sauvegarde en ligne - github par exemple ?
+P1 - Comparaison "Consensus des analystes Bourso" Vs "Mon site"
+P1 - [Rapport] Export PDF trop gros / problème si j'exporte tout
+P1 - [Rapport] Pouvoir avoir les entreprises surlesquelles j'ai investis / faire un filtre
+P1 - [Exemple FDJ] - Problème avev le back end / récupération des données
+P1 - [Rapport] Si déjà présent dans le CSV alors on affiche direct
+
+P2 - Créer un top 10 des entreprises les plus attractives / les moins attractives...
+P2 - Intégration du dividende par entreprise
+P2 - Donner à intervalle de temps régulier la somme sur mon PEA pour pouvoir suivre son évolution
+
+P3 - Faire un système de pagination également afin de limiter à 25 par exemple le nombre de tickers sur la page
+P3 - Faire une page avec les leçons à connaître (les types d'ordre, comment ça fonctionne, les heures de la bourse, mes objectifs...)
+P3 - [Rapport] Choisir les entreprises (s'il y a trop d'entreprises) que l'on veut charger dans un premier temps puis les autres dans un second temps
+    - ça doit se passer côté serveur
+    - sinon ajouter des arguments à l'url pour contrôler le backend
+P3 - Mettre en place un serveur qui calcule toutes les heures par exemple ces indicateurs et recevoir une notification si c'est le cas avec l'action à effectuer
+    (ok) Server Email en place
+    - créer un template (via une ref) seulement pour l'email (ou le rapport PDF)
+P3 - Gestion des erreurs (s'il n'y a plus internet (afficher un bandeau), si...)
+P3 - Voir l'évolution des scores en fonction du temps avec le tickersScore.csv
+P3 - Faire une vue "Mon portefeuille" (pouvoir ajouter le prix auquel on a acheté les actions, voir la performance...)
+P3 - Aperçu visuel du cours de l'indicateur

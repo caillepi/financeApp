@@ -1,0 +1,12 @@
+FRONT 
+Ajout d'une barre de navigation
+Ajout de contexte dans le front (TickersList, ticker)
+Page rapport non créée
+Page Ticker Management créée et finie
+Progress Bar
+
+BACK
+Ajout d'un CSV comme base de données pour les tickers
+Calcul de KPI sur Close, Bollinger Band et MACD
+A faire l'indicateur RSI
+
