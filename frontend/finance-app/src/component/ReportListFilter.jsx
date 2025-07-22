@@ -8,7 +8,8 @@ function ReportListFilter({ onFilterChange }) {
         coursMin: '',
         coursMax: '',
         noteMin: '',
-        noteMax: ''
+        noteMax: '',
+        isActive: ''
     });
 
     const handleChange = (e) => {
@@ -60,6 +61,13 @@ function ReportListFilter({ onFilterChange }) {
                 name="noteMax"
                 placeholder="Filtrer par note maximale"
                 value={filter.noteMax}
+                onChange={handleChange}
+            />
+            <input
+                type="checkbox"
+                name="isActive"
+                placeholder="Filtrer par entreprise investie"
+                value={filter.isActive}
                 onChange={handleChange}
             />
         </div>

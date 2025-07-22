@@ -14,7 +14,7 @@ function ReportList() {
     const [reportData, setReportData] = useState([]);
     const [reloadProp, setReloadProp] = useState(0);
     const [sortConfig, setSortConfig] = useState({key: null, direction: 'asc'});
-    const [filters, setFilters] = useState({name: '', code: '', coursMin: '', coursMax: '', noteMin: '', noteMax: ''});
+    const [filters, setFilters] = useState({name: '', code: '', coursMin: '', coursMax: '', noteMin: '', noteMax: '', isActive: ''});
     const [lastReload, setLastReload] = useState(null);
     const [offset, setOffset] = useState(0);        // lazy loading pour le tableau
     const [limit, setLimit] = useState(1);          // nombre d'éléments à charger par batch de chargement
@@ -223,6 +223,8 @@ function ReportList() {
             let score = computeScore(item.sma, item.macd, item.bollinger, item.rsi);
             const matchesNoteMin = filters.noteMin ? score >= parseFloat(filters.noteMin) : true;
             const matchesNoteMax = filters.noteMax ? score <= parseFloat(filters.noteMax) : true;
+            // isActive
+            /* const matchesIsActive = item.isActive == filters.isActive ? true : false; */
             return matchesName && matchesCode && matchesCoursMin && matchesCoursMax && matchesNoteMin && matchesNoteMax;
         });
     }, [sortedData, filters]);
