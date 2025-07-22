@@ -1,3 +1,0 @@
-Mise en place d'un fichier d'historisation des notes et de récupération si on est le même jour et déjà écrit
-Possibilité d'envoyer un email sur demande
-Possibilité d'exporter en PDF le rapport
