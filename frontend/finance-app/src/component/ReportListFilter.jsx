@@ -9,12 +9,18 @@ function ReportListFilter({ onFilterChange }) {
         coursMax: '',
         noteMin: '',
         noteMax: '',
-        isActive: ''
+        isActive: 0
     });
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        const newFilter = { ...filter, [name]: value };
+        const { name, value, checked } = e.target;
+        let newFilter = {};
+        if (name !== 'isActive') {
+            newFilter = { ...filter, [name]: value };
+        }
+        else {
+            newFilter = { ...filter, [name]: checked ? 1 : 0}
+        }
         setFilter(newFilter);
         onFilterChange(newFilter);
     };
@@ -63,6 +69,7 @@ function ReportListFilter({ onFilterChange }) {
                 value={filter.noteMax}
                 onChange={handleChange}
             />
+            <label htmlFor="isActive">isActive</label>
             <input
                 type="checkbox"
                 name="isActive"

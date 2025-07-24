@@ -69,7 +69,8 @@ function ReportList() {
                             rsi: dataKpiRsi,
                             rsiYesterday: dataTickersScore.rsi,
                             macd: dataKpiMacd,
-                            macdYesterday: dataTickersScore.macd
+                            macdYesterday: dataTickersScore.macd,
+                            isActive: ticker.isActive
                         });
     
                         // logique :
@@ -224,8 +225,8 @@ function ReportList() {
             const matchesNoteMin = filters.noteMin ? score >= parseFloat(filters.noteMin) : true;
             const matchesNoteMax = filters.noteMax ? score <= parseFloat(filters.noteMax) : true;
             // isActive
-            /* const matchesIsActive = item.isActive == filters.isActive ? true : false; */
-            return matchesName && matchesCode && matchesCoursMin && matchesCoursMax && matchesNoteMin && matchesNoteMax;
+            const matchesIsActive = item.isActive == filters.isActive ? true : false;
+            return matchesName && matchesCode && matchesCoursMin && matchesCoursMax && matchesNoteMin && matchesNoteMax && matchesIsActive;
         });
     }, [sortedData, filters]);
 

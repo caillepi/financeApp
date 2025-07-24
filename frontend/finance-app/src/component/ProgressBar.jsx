@@ -2,6 +2,11 @@ import React from "react";
 import './ProgressBar.css';
 
 function ProgressBar ({kpi}) {
+
+    function roundKpi(kpi) {
+        return parseFloat(kpi).toFixed(1);
+    }
+
     if (kpi == 'N/A' || kpi < 0 || kpi > 100) {
         return <>
              <div id="progressbar">
@@ -30,7 +35,7 @@ function ProgressBar ({kpi}) {
 
             {/* Affichage du pourcentage */}
             <div style={{ textAlign: 'center', marginTop: '5px', color: kpi > 50 ? '#4caf50' : '#f44336', fontWeight: 'bold' }}>
-                {kpi.toFixed(1)}%
+                {roundKpi(kpi)}%
             </div>
         </div>
     </>
