@@ -38,7 +38,7 @@ class Bourse {
                 this.data = null;
             }
             else {
-                console.error('Error fetching data:', error);
+                console.error(`Error fetching data (${this.ticker})`);
                 this.data = null;
             }
         }

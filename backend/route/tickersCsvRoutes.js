@@ -17,7 +17,6 @@ router.get('/tickers', async (req, res) => {
         res.json(tickersData);
     }
     catch (err) {
-        console.error(err);
         res.status(500).send('Erreur lors de la lecture du fichier CSV');
     }
 })

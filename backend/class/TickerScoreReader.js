@@ -81,7 +81,8 @@ class TickerScoreReader {
      * Convertir le fichier CSV en JSON pour qu'il soit utilisable par le front-end
      */
     convertCsvToJson() {
-        const tickersScoreData = this.getTickerScore().map(tickerScore => ({
+        const tickersScoreData = this.getTickerScore().map(tickerScore => {
+            return {
             day: tickerScore.getDay(),
             code: tickerScore.getCode(),
             mm: tickerScore.getMm(),
@@ -89,7 +90,7 @@ class TickerScoreReader {
             bollinger: tickerScore.getBollinger(),
             rsi: tickerScore.getRsi(),
             score: tickerScore.getScore()
-        }));
+        }});
         return tickersScoreData;
     }
 
@@ -112,7 +113,7 @@ class TickerScoreReader {
             fs.createReadStream(filePath)
                 .pipe(csv())
                 .on('data', (row) => {
-                    const tickerScore = new TickerScore(row.day, row.code, row.mm, row.macd, row.bollinger, row.score);
+                    const tickerScore = new TickerScore(row.day, row.code, row.mm, row.macd, row.bollinger, row.rsi, row.score);
                     tickersScore.push(tickerScore);
                 })
                 .on('end', () => {

@@ -18,7 +18,6 @@ router.get('/', async (req, res) => {
         res.json(tickersScoreData);
     }
     catch (err) {
-        console.error(err);
         res.status(500).send('Erreur lors de la lecture du fichier CSV');
     }
 });
@@ -41,7 +40,6 @@ router.get('/getticker', async (req, res) => {
     
     }
     catch (err) {
-        console.error(err);
         res.status(500).send('Erreur lors de la lecture du fichier CSV');
     }
 });
@@ -64,7 +62,6 @@ router.get('/getday', async (req, res) => {
 
     }
     catch (err) {
-        console.error(err);
         res.status(500).send('Erreur lors de la lecture du fichier CSV');
     }
 });
@@ -96,7 +93,6 @@ router.get('/gettickerandday', async (req, res) => {
 
     }
     catch (err) {
-        console.error(err);
         res.status(500).send('Erreur lors de la lecture du fichier CSV');
     }
 });
