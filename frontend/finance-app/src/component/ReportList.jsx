@@ -6,7 +6,7 @@ import { handleExportPDF } from "../utils/pdfExport";
 import { handleSendEmail } from "../utils/sendEmail";
 import ReportListActions from "./ReportListActions";
 import ReportListTable from "./ReportListTable";
-import { filterDataReport, sortDataReport } from "../utils/ReportListHelper";
+import { filterDataReport, reloadDataReport, sortDataReport } from "../utils/ReportListHelper";
 import { useReportData } from "../hook/useReportData";
 
 function ReportList() {
@@ -27,7 +27,7 @@ function ReportList() {
         <div id="reportlist" ref={emailContent}>
             {/* Mise en place des boutons d'actions */}
             <ReportListActions
-                handleReloadData={() => handleReloadData(setReportData, setOffset, setReloadProp)}
+                handleReloadData={() => reloadDataReport(setReportData, setOffset, setReloadProp)}
                 handleExportPDF={handleExportPDF}
                 handleSendEmail={handleSendEmail}
                 />

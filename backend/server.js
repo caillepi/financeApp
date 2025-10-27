@@ -2,15 +2,18 @@
 // variable d'environnement
 require('dotenv').config()
 
+const express = require('express');
+const session = require('express-session');
+
 // intialisation de l'application express
-const express = require('express')
-const app = express()
+const app = express();
 const port = process.env.PORT || 5000;
 var cors = require('cors');
 
 const { withTicker } = require('./utils/routeUtils.js')
 
 // import des routes
+const sessionRouter = require('./route/sessionRoutes.js');
 const tickersCsvRouter = require('./route/tickersCsvRoutes.js');
 const tickersScoreCsvRouter = require('./route/tickersScoreCsvRoutes.js');
 const kpiRouter = require('./route/kpiRoutes.js');
@@ -18,52 +21,38 @@ const enterpriseRouter = require('./route/enterpriseRoutes.js');
 const analystRouter = require('./route/analystRoutes.js');
 const tickersExplorerRouter = require('./route/tickersExplorerRoutes.js');
 const screenerRouter = require('./route/screenerRoutes.js');
+const { isAuthenticated } = require('./middleware/sessionProtection.js');
 
 // middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true, 
+}));
+app.use(express.json());
 
-// routes
-/**
- * Routes pour l'analyse des actions en bourse
- */
-app.get('/', withTicker((req, res, _, analyst) => {
-    res.send(analyst);
+// Configurer les sessions
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        secure: false,          // À mettre à true si tu utilises HTTPS
+        maxAge: 60 * 60 * 1000  // Durée de la session en millisecondes (ici 1 heure)
+    }
 }));
 
-/**
- * Routes avec l'objet Enterprise
- */
-app.use('/', enterpriseRouter);
+// routes publiques
+app.use('/session', sessionRouter);
 
-/**
- * Routes avec l'objet Analyst
- */
-app.use('/', analystRouter);
-
-/**
- * Récupérer les KPIs
- */
-app.use('/kpi', kpiRouter);
-
-/**
- * Interactions avec tickers.csv
- */
-app.use('/', tickersCsvRouter);
-
-/**
- * Interactions avec tickersScore.csv
- */
-app.use('/tickersScore', tickersScoreCsvRouter);
-
-/**
- * Récupérer des nouveaux tickers
- */
-app.use('/', tickersExplorerRouter);
-
-/**
- * Screeners
- */
-app.use('/screener', screenerRouter);
+// routes authentifiées
+app.use('/enterprise', isAuthenticated, enterpriseRouter);
+app.use('/analyst', isAuthenticated, analystRouter);
+app.use('/kpi', isAuthenticated, kpiRouter);
+app.use('/tickers', isAuthenticated, tickersCsvRouter);
+app.use('/tickersScore', isAuthenticated, tickersScoreCsvRouter);
+app.use('/tickersExplore', isAuthenticated, tickersExplorerRouter);
+app.use('/screener', isAuthenticated, screenerRouter);
 
 /**
  * Lancer le serveur

@@ -2,113 +2,115 @@ const express = require('express');
 const { withTicker } = require('../utils/routeUtils');
 const router = express.Router();
 
-/* Renvoie le minimum sur une période donnée (minimum parmi les minimums) */
+// Fonction utilitaire pour vérifier le paramètre period
+function checkPeriod(req, res) {
+    const { period } = req.query;
+    if (period == null) {
+        res.status(400).json({ error: 'Period query parameter is empty' });
+        return null;
+    }
+    return period;
+}
+
+/* Renvoie le minimum sur une période donnée */
 router.get('/min', withTicker((req, res, _, analyst) => {
-    const { period } = req.query;
+    const period = checkPeriod(req, res);
+    if (!period) return;
 
-    if (period == null) {
-        res.send('Period query parameter is empty');
-    }
-
-    let data = analyst.getLowData(period);
-
-    if (data == 'N/A' || data == null) {
-        res.send('N/A');
-    }
-    else {
-        res.send(Math.min(...data));
+    const data = analyst.getLowData(period);
+    if (!data || data === 'N/A') {
+        res.status(200).json({ min: 'N/A' });
+    } else {
+        res.status(200).json({ min: Math.min(...data) });
     }
 }));
 
-/* Renvoie le maximum sur une période donnée (maximum parmi les maximums) */
+/* Renvoie le maximum sur une période donnée */
 router.get('/max', withTicker((req, res, _, analyst) => {
-    const { period } = req.query;
+    const period = checkPeriod(req, res);
+    if (!period) return;
 
-    if (period == null) {
-        res.send('Period query parameter is empty');
-    }
-
-    let data = analyst.getHighData(period);
-    if (data == 'N/A' || data == null) {
-        res.send('N/A');
-    }
-    else {
-        res.send(Math.max(...data));
+    const data = analyst.getHighData(period);
+    if (!data || data === 'N/A') {
+        res.status(200).json({ max: 'N/A' });
+    } else {
+        res.status(200).json({ max: Math.max(...data) });
     }
 }));
 
-/* Renvoie la liste de tous les minimums sur une période par défaut */
+/* Liste des minimums sur la période */
 router.get('/mindata', withTicker((req, res, _, analyst) => {
-    const { period } = req.query;
+    const period = checkPeriod(req, res);
+    if (!period) return;
 
-    if (period == null) {
-        res.send('Period query parameter is empty');
-    }
-
-    res.send(analyst.getLowData(period));
+    res.status(200).json({ mindata: analyst.getLowData(period) });
 }));
 
-/* Renvoie la liste de tous les maximums sur une période par défaut */
+/* Liste des maximums sur la période */
 router.get('/maxdata', withTicker((req, res, _, analyst) => {
-    const { period } = req.query;
+    const period = checkPeriod(req, res);
+    if (!period) return;
 
-    if (period == null) {
-        res.send('Period query parameter is empty');
-    }
-    
-    res.send(analyst.getHighData(period));
+    res.status(200).json({ maxdata: analyst.getHighData(period) });
 }));
 
-/* Renvoie les cours d'ouverture sur la période par défaut */
+/* Cours d'ouverture */
 router.get('/opendata', withTicker((req, res, _, analyst) => {
-    res.send(analyst.getOpenData());
+    res.status(200).json({ opendata: analyst.getOpenData() });
 }));
 
-/* Renvoie les cours de fermeture sur la période par défaut */
+/* Cours de fermeture */
 router.get('/closedata', withTicker((req, res, _, analyst) => {
-    res.send(analyst.getCloseData());
+    res.status(200).json({ closedata: analyst.getCloseData() });
 }));
 
-/* Renvoie les volumes échangés sur la période par défaut */
+/* Volumes échangés */
 router.get('/volumedata', withTicker((req, res, _, analyst) => {
-    res.send(analyst.getVolumeData());
+    res.status(200).json({ volumedata: analyst.getVolumeData() });
 }));
 
-/* Renvoie les dates de la période par défaut */
+/* Dates de la période */
 router.get('/date', withTicker((req, res, _, analyst) => {
-    res.send(analyst.getDateData());
+    res.status(200).json({ dates: analyst.getDateData() });
 }));
 
-/* Renvoie la moyenne des cours de cloture sur la période par défaut */
+/* Moyenne des cours de clôture */
 router.get('/mean', withTicker((req, res, _, analyst) => {
-    const { period } = req.query;
-    res.send(analyst.getMean(period));
+    const period = checkPeriod(req, res);
+    if (!period) return;
+
+    res.status(200).json({ mean: analyst.getMean(period) });
 }));
 
+/* RSI */
 router.get('/rsi', withTicker((req, res, _, analyst) => {
-    res.send(analyst.getRSI());
+    res.status(200).json({ rsi: analyst.getRSI() });
 }));
 
-/* Renvoie la liste des SMA sur une période donnée */
+/* SMA */
 router.get('/sma', withTicker((req, res, _, analyst) => {
-    const { period } = req.query;
-    res.send(analyst.getSMA(period));
+    const period = checkPeriod(req, res);
+    if (!period) return;
+
+    res.status(200).json({ sma: analyst.getSMA(period) });
 }));
 
-/* Renvoie la liste des MACD sur la période par défaut */
+/* MACD */
 router.get('/macd', withTicker((req, res, _, analyst) => {
-    res.send(analyst.getMACD());
+    res.status(200).json({ macd: analyst.getMACD() });
 }));
 
-/* Renvoie la liste des EMA sur une période de 12 */
+/* EMA */
 router.get('/ema', withTicker((req, res, _, analyst) => {
-    const { period } = req.query;
-    res.send(analyst.getEMA(period));
+    const period = checkPeriod(req, res);
+    if (!period) return;
+
+    res.status(200).json({ ema: analyst.getEMA(period) });
 }));
 
-/* Renvoie la liste des EMA sur une période de 20 */
+/* Bollinger Band sur période fixe */
 router.get('/bollingerband', withTicker((req, res, _, analyst) => {
-    res.send(analyst.getBollingerBand(20));
+    res.status(200).json({ bollingerband: analyst.getBollingerBand(20) });
 }));
 
 module.exports = router;

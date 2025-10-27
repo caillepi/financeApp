@@ -3,29 +3,48 @@ import './HomePage.css';
 import ResumeData from '../component/ResumeData.jsx';
 import ChartChooser from '../component/ChartChooser.jsx';
 import PeriodSwitcher from '../component/PeriodSwitcher.jsx';
-import NavBar from '../component/NavBar.jsx';
+import { useAuthentification } from '../hook/useAuthentication.jsx';
+import { useNavigation } from '../hook/useNavigation.jsx';
+import { useEffect } from 'react';
 
 function HomePage () {
-    return <>
-        <div id='homepage'>
-            <div id='homepage-title'>
-                <span id='homepage-title-resume'>
-                    <ResumeData />
-                </span>
-                <span id='homepage-title-chooser'>
-                    <ChartChooser />
-                </span>
-                <span id='homepage-title-period'>
-                    <PeriodSwitcher />
-                </span>
-            </div>
-            <div className='homepage-content'>
-                <div className='homepage-content-chart'>
-                    <GeneralChart />
+    const { navigate } = useNavigation();
+    const { isAuthenticated } = useAuthentification();
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, navigate]);
+
+    if (!isAuthenticated) {
+        // Pendant que la redirection s’effectue, on ne rend rien
+        return null;
+    }
+
+    if (isAuthenticated) {
+        return <>
+            <div id='homepage'>
+                <div id='homepage-title'>
+                    <span id='homepage-title-resume'>
+                        <ResumeData />
+                    </span>
+                    <span id='homepage-title-chooser'>
+                        <ChartChooser />
+                    </span>
+                    <span id='homepage-title-period'>
+                        <PeriodSwitcher />
+                    </span>
+                </div>
+                <div className='homepage-content'>
+                    <div className='homepage-content-chart'>
+                        <GeneralChart />
+                    </div>
                 </div>
             </div>
-        </div>
-    </>
+        </>
+    }
+
 }
 
 export default HomePage;

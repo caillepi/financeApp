@@ -1,285 +1,222 @@
-import axios from 'axios';
+import { apiCall } from './apiServices'; // Assure-toi que le chemin est correct
 
-// Fonction générique pour les appels GET avec gestion des erreurs
-async function fetchData(endpoint, ticker) {
-    try {
-        const url = import.meta.env.VITE_API_URL + endpoint;
-        const response = await axios.get(url, {params: {ticker}});
-        return response.data;
-    } catch (err) {
-        return null;
-    }
-}
-
-// Fonctions spécifiques qui appellent fetchData
+// Fonctions spécifiques qui appellent apiCall
 export async function getEnterpriseName(ticker) {
-  return fetchData('/enterprisename', ticker);
+  const data = await apiCall('/enterprise/enterprisename', { ticker });
+  return data.enterprisename;
 }
 
 export async function getCurrent(ticker) {
-  return fetchData('/current', ticker);
+  const data = await apiCall('/enterprise/current', { ticker });
+  return data.current;
 }
 
 export async function getLow(ticker) {
-  return fetchData('/low', ticker);
+  const data = await apiCall('/enterprise/low', { ticker });
+  return data.low;
 }
 
 export async function getHigh(ticker) {
-  return fetchData('/high', ticker);
+  const data = await apiCall('/enterprise/high', { ticker });
+  return data.high;
 }
 
 export async function getSector(ticker) {
-  return fetchData('/sector', ticker);
+  const data = await apiCall('/enterprise/sector', { ticker });
+  return data.sector;
 }
 
 export async function getDescription(ticker) {
-  return fetchData('/description', ticker);
+  const data = await apiCall('/enterprise/description', { ticker });
+  return data.description;
 }
 
 export async function getLastOpen(ticker) {
-  const data = await fetchData('/opendata', ticker);
-  
-  if (data == 'N/A') {
-    return null;
-  }
-  return data ? parseFloat(data[data.length - 1].toFixed(2)) : null;
+  const data = await apiCall('/analyst/opendata', { ticker });
+  if (data?.opendata === 'N/A') return null;
+  return data?.opendata ? parseFloat(data.opendata[data.opendata.length - 1].toFixed(2)) : null;
 }
 
 export async function getOpenData(ticker) {
-  return fetchData('/opendata', ticker);
+  const data = await apiCall('/analyst/opendata', { ticker });
+  return data.opendata;
 }
 
 export async function getLastClose(ticker) {
-  const data = await fetchData('/closedata', ticker);
-  if (data == 'N/A') {
-    return null;
-  }
-  return data ? parseFloat(data[data.length - 2].toFixed(2)) : null;
+  const data = await apiCall('/analyst/closedata', { ticker });
+  if (data?.closedata === 'N/A') return null;
+  return data?.closedata ? parseFloat(data.closedata[data.closedata.length - 2].toFixed(2)) : null;
 }
 
 export async function getCloseData(ticker) {
-  return fetchData('/closedata', ticker);
+  const data = await apiCall('/analyst/closedata', { ticker });
+  return data.closedata;
 }
 
 export async function getVolumeData(ticker) {
-  return fetchData('/volumedata', ticker);
+  const data = await apiCall('/analyst/volumedata', { ticker });
+  return data.volumedata;
 }
 
 export async function getMinData(ticker, period) {
-  try {
-      const url = import.meta.env.VITE_API_URL + '/mindata';
-      const response = await axios.get(url, {params: {ticker, period}});
-      return response.data;
-  } catch (err) {
-      console.log(err.response?.data);
-      return null;
-  }
+  const data = await apiCall('/analyst/mindata', { ticker, period });
+  return data.mindata;
 }
 
 export async function getMaxData(ticker, period) {
-  try {
-      const url = import.meta.env.VITE_API_URL + '/maxdata';
-      const response = await axios.get(url, {params: {ticker, period}});
-      return response.data;
-  } catch (err) {
-      console.log(err.response?.data);
-      return null;
-  }
+  const data = await apiCall('/analyst/maxdata', { ticker, period });
+  return data.maxdata;
 }
 
 export async function getMin(ticker, period) {
-  try {
-      const url = import.meta.env.VITE_API_URL + '/min';
-      const response = await axios.get(url, {params: {ticker, period}});
-      return response.data;
-  } catch (err) {
-      console.log(err.response?.data);
-      return null;
-  }
+  const data = await apiCall('/analyst/min', { ticker, period });
+  return data.min;
 }
 
 export async function getMax(ticker, period) {
-  try {
-      const url = import.meta.env.VITE_API_URL + '/max';
-      const response = await axios.get(url, {params: {ticker, period}});
-      return response.data;
-  } catch (err) {
-      console.log(err.response?.data);
-      return null;
-  }
+  const data = await apiCall('/analyst/max', { ticker, period });
+  return data.max;
 }
 
 export async function getDateData(ticker) {
-  return fetchData('/date', ticker);
+  const data = await apiCall('/analyst/date', { ticker });
+  return data.dates;
 }
 
 export async function getMean(ticker, period) {
-  try {
-      const url = import.meta.env.VITE_API_URL + '/mean';
-      const response = await axios.get(url, {params: {ticker, period}});
-      return response.data;
-  } catch (err) {
-      console.log(err.response?.data);
-      return null;
-  }
+  const data = await apiCall('/analyst/mean', { ticker, period });
+  return data.mean;
 }
 
 export async function getSMA(period, ticker) {
-  try {
-      const url = import.meta.env.VITE_API_URL + '/sma';
-      const response = await axios.get(url, {params: {ticker, period}});
-      return response.data;
-  } catch (err) {
-      console.log(err.response?.data);
-      return null;
-  }
+  const data = await apiCall('/analyst/sma', { ticker, period });
+  return data.sma;
 }
 
 export async function getRsi(ticker) {
-  return fetchData('/rsi', ticker);
+  const data = await apiCall('/analyst/rsi', { ticker });
+  return data.rsi;
 }
 
 export async function getMACD(ticker) {
-  return fetchData('/macd', ticker);
+  const data = await apiCall('/analyst/macd', { ticker });
+  return data.macd;
 }
 
 export async function getEMA(period, ticker) {
-  try {
-      const url = import.meta.env.VITE_API_URL + '/ema';
-      const response = await axios.get(url, {params: {ticker, period}});
-      return response.data;
-  } catch (err) {
-      console.log(err.response?.data);
-      return null;
-  }
+  const data = await apiCall('/analyst/ema', { ticker, period });
+  return data.ema;
 }
 
 export async function getBollingerBand(ticker) {
-  return fetchData('/bollingerband', ticker);
+  const data = await apiCall('/analyst/bollingerband', { ticker });
+  return data.bollingerband;
 }
 
 /**
  * Récupération des KPIs
  */
 export async function getKpiSma(ticker) {
-  return fetchData('/kpi/close', ticker);
+  const data = await apiCall('/kpi/close', { ticker });
+  return data.close;
 }
 
 export async function getKpiBollinger(ticker) {
-  return fetchData('/kpi/bollinger', ticker);
+  const data = await apiCall('/kpi/bollinger', { ticker });
+  return data.bollinger;
 }
 
 export async function getKpiMacd(ticker) {
-  return fetchData('/kpi/macd', ticker);
+  const data = await apiCall('/kpi/macd', { ticker });
+  return data.macd;
 }
 
 export async function getKpiRsi(ticker) {
-  return fetchData('/kpi/rsi', ticker);
+  const data = await apiCall('/kpi/rsi', { ticker });
+  return data.rsi;
 }
 
 /**
  * Interactions avec la base de données des tickers
  */
-export async function getTickers() {
-  return fetchData('/tickers');
+export async function   getTickers() {
+  return await apiCall('/tickers');
 }
 
 export async function removeTicker(code) {
-  try {
-    const url = import.meta.env.VITE_API_URL + `/removeTicker`;
-    const response = await axios.get(url, {params: {code}});
-    return response.data;
-  } catch (err) {
-    console.log(err.response?.data);
-    return null;
-  }
+  return apiCall('/tickers/remove', { code });
 }
 
 export async function addTicker(name, code, isActive) {
-  try {
-    const url = import.meta.env.VITE_API_URL + `/addTicker`;
-    const response = await axios.get(url, {params: {name, code, isActive}});
-    return response.data;
-  } catch (err) {
-    console.log(err.response?.data);
-    return null;
-  }
+  return apiCall('/tickers/add', { name, code, isActive });
 }
 
 export async function updateTicker(code, isActive) {
-  try {
-    const url = import.meta.env.VITE_API_URL + `/updateTicker`;
-    const response = await axios.get(url, {params: {code, isActive}});
-    return response.data;
-  } catch (err) {
-    console.log(err.response?.data);
-    return null;
-  }
+  return apiCall('/tickers/update', { code, isActive });
 }
 
 /**
  * Interactions avec la base de données des tickersScore
  */
 export async function getTickersScore() {
-  return fetchData('/tickersScore');
+  const data = await apiCall('/tickersScore');
+  return data.tickersScore;
 }
 
 export async function getTickersScoreWithTicker(code) {
-  try {
-    const url = import.meta.env.VITE_API_URL + `/tickersScore/getticker`;
-    const response = await axios.get(url, {params: { code }});
-    return response.data;
-  } catch (err) {
-    console.log(err.response?.data);
-    return null;
-  }
+  const data = await apiCall('/tickersScore/getticker', { code });
+  return data.tickersScore;
 }
 
 export async function getTickersScoreWithDay(day) {
-  try {
-    const url = import.meta.env.VITE_API_URL + `/tickersScore/getday`;
-    const response = await axios.get(url, {params: { day }});
-    return response.data;
-  } catch (err) {
-    console.log(err.response?.data);
-    return null;
-  }
+  const data = await apiCall('/tickersScore/getday', { day });
+  return data.tickersScore;
 }
 
 export async function getTickersScoreWithTickerAndDay(ticker, day) {
-  try {
-    const url = import.meta.env.VITE_API_URL + `/tickersScore/gettickerandday`;
-    const response = await axios.get(url, {params: { ticker, day }});
-    if (response == 'N/A') {
-      return null;
-    }
-    else {
-      return response.data[0];
-    }
-  } catch (err) {
-    console.log(err.response?.data);
+  const data = await apiCall('/tickersScore/gettickerandday', { ticker, day });
+  if (data === 'N/A') {
     return null;
   }
+  return data ? data[0] : null;
 }
 
 export async function removeTickerScore(code, day) {
+  return apiCall('/tickersScore/remove', { code, day });
+}
+
+export async function addTickerScore(day, code, mm, macd, bollinger, rsi, score) {
+  return apiCall('/tickersScore/add', { day, code, mm, macd, bollinger, rsi, score });
+}
+
+/**
+ * Gestion des sessions
+ */
+export async function apiLogin(username, password) {
   try {
-    const url = import.meta.env.VITE_API_URL + `/tickersScore/remove`;
-    const response = await axios.get(url, {params: {code, day}});
-    return response.data;
+    const response = await apiCall('/session/login', { username, password }, "POST");
+    return response;
   } catch (err) {
-    console.log(err.response?.data);
+    console.log(err);
+    return err.response?.data?.message || 'Erreur lors de la connexion';
+  }
+}
+
+export async function apiLogout() {
+  try {
+    const response = await apiCall("/session/logout", null, "POST");
+    return response.data.message;
+  } catch (err) {
+    if (err.response?.status === 401) {
+      console.log('Utilisateur non authentifié, redirection vers /login');
+      navigate('/login');
+    } else {
+      console.log(err.response?.data || err.message);
+    }
     return null;
   }
 }
 
-export async function addTickerScore(day, code, mm, macd, bollinger, rsi, score) {
-  try {
-    const url = import.meta.env.VITE_API_URL + `/tickersScore/add`;
-    const response = await axios.get(url, {params: {day, code, mm, macd, bollinger, rsi, score}});
-    return response.data;
-  } catch (err) {
-    console.log(err.response?.data);
-    return null;
-  }
+export async function checkAuth() {
+  return apiCall('/session/check-auth');
 }

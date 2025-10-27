@@ -2,6 +2,7 @@ const express = require('express');
 const yahooFinance = require('yahoo-finance2').default;
 const router = express.Router();
 
+
 router.get('/dailygainers', async (req, res) => {
     try {
         const queryOptions = { count: 10, region: 'FR', lang: 'fr-FR', market: 'fr_market' };
