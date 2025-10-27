@@ -3,7 +3,7 @@ import { getTickers } from "../utils/requests";
 import { useAuthentification } from "./useAuthentication";
 
 export const TickersListContext = createContext({
-    tickerList: [],
+    tickersList: [],
     changeTickersList: () => {}
 });
 

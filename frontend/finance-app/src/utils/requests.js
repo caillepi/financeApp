@@ -3,7 +3,7 @@ import { apiCall } from './apiServices'; // Assure-toi que le chemin est correct
 // Fonctions spécifiques qui appellent apiCall
 export async function getEnterpriseName(ticker) {
   const data = await apiCall('/enterprise/enterprisename', { ticker });
-  return data.enterprisename;
+  return data.name;
 }
 
 export async function getCurrent(ticker) {
@@ -211,7 +211,7 @@ export async function apiLogout() {
       console.log('Utilisateur non authentifié, redirection vers /login');
       navigate('/login');
     } else {
-      console.log(err.response?.data || err.message);
+      console.log(err.response?.data || err);
     }
     return null;
   }

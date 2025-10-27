@@ -55,10 +55,9 @@ export function AuthentificationContextProvider({children}) {
     };
 
     const logout = async () => {
-        let res = await apiLogout();
+        let _ = await apiLogout();
         setUser(null);
         setIsAuthenticated(false);
-        console.log(res.message);
     }
 
     if (loading) {

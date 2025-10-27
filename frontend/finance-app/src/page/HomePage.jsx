@@ -6,10 +6,12 @@ import PeriodSwitcher from '../component/PeriodSwitcher.jsx';
 import { useAuthentification } from '../hook/useAuthentication.jsx';
 import { useNavigation } from '../hook/useNavigation.jsx';
 import { useEffect } from 'react';
+import { useTicker } from '../hook/useTicker.jsx';
 
 function HomePage () {
     const { navigate } = useNavigation();
     const { isAuthenticated } = useAuthentification();
+    const { ticker } = useTicker();
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -17,7 +19,7 @@ function HomePage () {
         }
     }, [isAuthenticated, navigate]);
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !ticker) {
         // Pendant que la redirection s’effectue, on ne rend rien
         return null;
     }

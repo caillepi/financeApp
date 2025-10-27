@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useTicker } from "../hook/useTicker"
-import { getTickers } from "../utils/requests";
+import { useTicker } from "../hook/useTicker";
 import { useTickersList } from "../hook/useTickerList";
 
 function TickerSwitcher() {

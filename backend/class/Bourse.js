@@ -45,7 +45,7 @@ class Bourse {
     }
 
     getName() {
-        return this.data?.longName || 'N/A';
+        return this.data?.longName || this.data?.shortName || 'N/A';
     }
 
     getCurrent() {
