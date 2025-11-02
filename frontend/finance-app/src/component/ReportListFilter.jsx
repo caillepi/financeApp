@@ -9,18 +9,13 @@ function ReportListFilter({ onFilterChange }) {
         coursMax: '',
         noteMin: '',
         noteMax: '',
-        isActive: 0
+        isActive: 2
     });
 
     const handleChange = (e) => {
         const { name, value, checked } = e.target;
         let newFilter = {};
-        if (name !== 'isActive') {
-            newFilter = { ...filter, [name]: value };
-        }
-        else {
-            newFilter = { ...filter, [name]: checked ? 1 : 0}
-        }
+        newFilter = { ...filter, [name]: value };
         setFilter(newFilter);
         onFilterChange(newFilter);
     };
@@ -70,13 +65,16 @@ function ReportListFilter({ onFilterChange }) {
                 onChange={handleChange}
             />
             <label htmlFor="isActive">isActive</label>
-            <input
-                type="checkbox"
+            <select 
                 name="isActive"
-                placeholder="Filtrer par entreprise investie"
+                id="isActive"
                 value={filter.isActive}
                 onChange={handleChange}
-            />
+                >
+                <option value="2">Tout</option>
+                <option value="1">Oui</option>
+                <option value="0">Non</option>
+            </select>
         </div>
     </>
 }

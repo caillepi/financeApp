@@ -15,10 +15,10 @@ router.get('/', async (req, res) => {
         const tickersScoreData = tickersScoreReader.convertCsvToJson();
 
         // Envoyer les données en format JSON
-        res.json(tickersScoreData);
+        res.status(200).json(tickersScoreData);
     }
     catch (err) {
-        res.status(500).send('Erreur lors de la lecture du fichier CSV');
+        res.status(500).json({message: 'Erreur lors de la lecture du fichier CSV'});
     }
 });
 
@@ -27,7 +27,7 @@ router.get('/getticker', async (req, res) => {
         const { ticker } = req.query;
 
         if (ticker == null) {
-            res.send('Ticker query parameter is empty');
+            res.status(400).json({message : 'Ticker query parameter is empty'});
         }
         else {
             // Convertir les instances de TickerScore en objets simples
@@ -35,12 +35,12 @@ router.get('/getticker', async (req, res) => {
             tickersScoreData = tickersScoreData.filter(item => item.code === ticker)
         
             // Envoyer les données en format JSON
-            res.json(tickersScoreData);
+            res.status(200).json(tickersScoreData);
         }
     
     }
     catch (err) {
-        res.status(500).send('Erreur lors de la lecture du fichier CSV');
+        res.status(500).json({message : 'Erreur lors de la lecture du fichier CSV'});
     }
 });
 
@@ -49,7 +49,7 @@ router.get('/getday', async (req, res) => {
         const { day } = req.query;
 
         if (day == null) {
-            res.send('Day query parameter is empty');
+            res.status(400).json({message : 'Day query parameter is empty'});
         }
         else {
             // Convertir les instances de TickerScore en objets simples
@@ -57,12 +57,12 @@ router.get('/getday', async (req, res) => {
             tickersScoreData = tickersScoreData.filter(item => item.day === day);
     
             // Envoyer les données en format JSON
-            res.json(tickersScoreData);
+            res.status(200).json(tickersScoreData);
         }
 
     }
     catch (err) {
-        res.status(500).send('Erreur lors de la lecture du fichier CSV');
+        res.status(500).json({message : 'Erreur lors de la lecture du fichier CSV'});
     }
 });
 
@@ -71,10 +71,10 @@ router.get('/gettickerandday', async (req, res) => {
         const { ticker, day } = req.query;
 
         if (ticker == null) {
-            res.send('Ticker query parameter is empty');
+            res.status(400).json({message : 'Ticker query parameter is empty' });
         }
         else if (day == null) {
-            res.send('Day query parameter is empty');
+            res.status(400).json({message : 'Day query parameter is empty' });
         }
         else {
             // Convertir les instances de TickerScore en objets simples
@@ -83,17 +83,17 @@ router.get('/gettickerandday', async (req, res) => {
             tickersScoreData = tickersScoreData.filter(item => item.code === ticker);
 
             if (tickersScoreData.length == 0) {
-                res.send('N/A');
+                res.status(200).json(tickersScoreData);
             }
             else {
                 // Envoyer les données en format JSON
-                res.json(tickersScoreData);
+                res.status(200).json(tickersScoreData);
             }
         }
 
     }
     catch (err) {
-        res.status(500).send('Erreur lors de la lecture du fichier CSV');
+        res.status(500).json({message: 'Erreur lors de la lecture du fichier CSV'});
     }
 });
 
@@ -101,30 +101,30 @@ router.get('/add', async (req, res) => {
     const { day, code, mm, macd, bollinger, rsi, score } = req.query;
 
     if (day == null) {
-        res.send('Day query parameter is empty');
+        res.status(400).json({message: 'Day query parameter is empty'});
     }
     else if (code == null) {
-        res.send('Code query parameter is empty');
+        res.status(400).json({message: 'Code query parameter is empty'});
     }
     else if (mm == null) {
-        res.send('Mm query parameter is empty');
+        res.status(400).json({message: 'Mm query parameter is empty'});
     }
     else if (macd == null) {
-        res.send('Macd query parameter is empty');
+        res.status(400).json({message: 'Macd query parameter is empty'});
     }
     else if (bollinger == null) {
-        res.send('Bollinger query parameter is empty');
+        res.status(400).json({message: 'Bollinger query parameter is empty'});
     }
     else if (rsi == null) {
-        res.send('Rsi query parameter is empty');
+        res.status(400).json({message: 'Rsi query parameter is empty'});
     }
     else if (score == null) {
-        res.send('Score query parameter is empty');
+        res.status(400).json({message: 'Score query parameter is empty'});
     }
     else {
         let newTickerScore = new TickerScore(day, code, mm, macd, bollinger, rsi, score);
         tickersScoreReader.addTickerScore(newTickerScore);
-        res.send("Element correctement ajouté" + newTickerScore);
+        res.status(200).json({message: "Element correctement ajouté" + newTickerScore});
     }
 });
 
@@ -132,14 +132,14 @@ router.get('/remove', async (req, res) => {
     const { code, day } = req.query;
 
     if (code == null) {
-        res.send('Code query parameter is empty');
+        res.status(400).json({message: 'Code query parameter is empty'});
     }
     else if (day == null) {
-        res.send('Day query parameter is empty');
+        res.status(400).json({message: 'Day query parameter is empty'});
     }
     else {
         tickersScoreReader.removeTickerScore(code, day);
-        res.send("Element correctement supprimé");
+        res.status(200).json({message: "Element correctement supprimé"});
     }
 });
 
