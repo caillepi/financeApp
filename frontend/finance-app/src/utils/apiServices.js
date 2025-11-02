@@ -16,7 +16,7 @@ export async function apiCall(url, params = null, method = 'GET') {
       config.data = params;
     }
 
-    const response = await axios(config);    
+    const response = await axios(config); 
     response.data.status = response?.status;
     return response.data;
 
@@ -29,6 +29,7 @@ export async function apiCall(url, params = null, method = 'GET') {
       // Redirige éventuellement ici
     } else {
       console.error('Erreur API:', data || err.message);
+      console.error(err);
     }
 
     // Ajoute le statut à l'objet d'erreur renvoyé

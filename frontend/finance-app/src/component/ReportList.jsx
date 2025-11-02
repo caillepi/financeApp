@@ -12,11 +12,11 @@ import { useReportData } from "../hook/useReportData";
 function ReportList() {
     const { tickersList } = useTickersList();
     const [reloadProp, setReloadProp] = useState(0);
-    const [limit, setLimit] = useState(1);          // nombre d'éléments à charger par batch de chargement
+    const [limit, setLimit] = useState(2);          // nombre d'éléments à charger par batch de chargement
     const { reportData, setReportData, offset, setOffset } = useReportData(tickersList, reloadProp, limit);
 
     const [sortConfig, setSortConfig] = useState({key: null, direction: 'asc'});
-    const [filters, setFilters] = useState({name: '', code: '', coursMin: '', coursMax: '', noteMin: '', noteMax: '', isActive: ''});
+    const [filters, setFilters] = useState({name: '', code: '', coursMin: '', coursMax: '', noteMin: '', noteMax: '', isActive: 2});
 
     const emailContent = useRef();
 

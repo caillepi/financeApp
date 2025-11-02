@@ -32,7 +32,6 @@ export function TickersListContextProvider ({children}) {
             if (isAuthenticated) {
                 try {
                     let data = await getTickers();
-                    console.log(data);
                     if (!ignore) {
                         setTickersList(data);
                     }

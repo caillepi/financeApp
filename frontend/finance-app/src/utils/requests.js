@@ -205,7 +205,7 @@ export async function apiLogin(username, password) {
 export async function apiLogout() {
   try {
     const response = await apiCall("/session/logout", null, "POST");
-    return response.data.message;
+    return response.message;
   } catch (err) {
     if (err.response?.status === 401) {
       console.log('Utilisateur non authentifié, redirection vers /login');

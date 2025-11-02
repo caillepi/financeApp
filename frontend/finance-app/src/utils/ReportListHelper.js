@@ -38,7 +38,10 @@ export function filterDataReport (data, filters) {
         const matchesNoteMin = filters.noteMin ? score >= parseFloat(filters.noteMin) : true;
         const matchesNoteMax = filters.noteMax ? score <= parseFloat(filters.noteMax) : true;
         // isActive
-        const matchesIsActive = item.isActive == filters.isActive ? true : false;
+        let matchesIsActive = true;
+        if (filters.isActive != 2) {
+            matchesIsActive = item.isActive == filters.isActive ? true : false;
+        }
         return matchesName && matchesCode && matchesCoursMin && matchesCoursMax && matchesNoteMin && matchesNoteMax && matchesIsActive;
     });
 }
