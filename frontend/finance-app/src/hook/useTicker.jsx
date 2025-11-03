@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useTickersList } from "./useTickerList";
-import { minTime } from "date-fns/constants";
 
 export const TickerContext = createContext({
     ticker: null,
@@ -22,7 +21,7 @@ export function TickerContextProvider({ children }) {
             setTickerByDefault(false);
         }
         else if (tickersList.length === 0 && ticker === null) {
-            setTicker("CS.PA"); // fallback si liste vide
+            setTicker("CS.PA");
             setTickerByDefault(true);
         }
     }, [tickersList, ticker]);

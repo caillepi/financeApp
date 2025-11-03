@@ -147,8 +147,8 @@ export async function removeTicker(code) {
   return apiCall('/tickers/remove', { code });
 }
 
-export async function addTicker(name, code, isActive) {
-  return apiCall('/tickers/add', { name, code, isActive });
+export async function addTicker(name, code, isActive, sector, industry, exchange, currency) {
+  return apiCall('/tickers/add', { name, code, isActive, sector, industry, exchange, currency });
 }
 
 export async function updateTicker(code, isActive) {

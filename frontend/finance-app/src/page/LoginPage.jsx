@@ -3,8 +3,8 @@ import { useNavigation } from "../hook/useNavigation";
 import { useAuthentification } from "../hook/useAuthentication";
 
 function LoginPage () {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('admin');
+    const [password, setPassword] = useState('password123');
     const [message, setMessage] = useState('');
 
     const { navigate } = useNavigation();

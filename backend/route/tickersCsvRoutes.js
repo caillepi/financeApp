@@ -1,45 +1,54 @@
 const express = require('express');
-const TickerReader = require('../class/TickerReader');
 const Ticker = require('../class/Ticker');
-const { isAuthenticated } = require('../middleware/sessionProtection');
+const TickerService = require('../service/TickerService');
 const router = express.Router();
 
-let tickerReader = new TickerReader();
-tickerReader.init();
-
 /**
- * Interactions avec tickers.csv
+ * Routes pour interagir avec la table 'ticker'
  */
 router.get('', async (req, res) => {
-    try {       
-        // Convertir les instances de Ticker en objets simples
-        const tickersData = tickerReader.convertCsvToJson();
+    try {
+        const data = await TickerService.getAll();
 
-        // Envoyer les données en format JSON
-        res.json(tickersData);
+        res.status(200).json(data);
     }
     catch (err) {
-        res.status(500).send('Erreur lors de la lecture du fichier CSV');
+        res.status(500).json({message: 'Erreur lors de la récupération des tickers'});
     }
-})
+});
 
-router.get('/add', isAuthenticated, async (req, res) => {
-    const { name, code, isActive } = req.query;
-    let newTicker = new Ticker(name, code, isActive);
-    tickerReader.addTicker(newTicker);
-    res.send("Element correctement ajouté");
-})
+router.get('/add', async (req, res) => {
+    const { name, code, isActive, sector, industry, exchange, currency } = req.query;
+    try {
+        let newTicker = new Ticker(name, code, isActive, sector, industry, exchange, currency);
+        await TickerService.add(newTicker);
+        res.status(200).json({message: "Element correctement ajouté"});
+    }
+    catch (err) {
+        res.status(500).json({message: "Erreur lors de l'ajout du ticker " + code})
+    }
+});
 
-router.get('/remove', isAuthenticated, async (req, res) => {
+router.get('/remove', async (req, res) => {
     const { code } = req.query;
-    tickerReader.removeTicker(code);
-    res.send("Element correctement supprimé");
-})
+    try {
+        await TickerService.remove(code);
+        res.status(200).json({message: "Element correctement supprimé"});
+    }
+    catch (err) {
+        res.status(500).json({message: "Erreur lors de la suppression du ticker " + code})
+    }
+});
 
-router.get('/update', isAuthenticated, async (req, res) => {
+router.get('/update', async (req, res) => {
     const { code, isActive } = req.query;
-    tickerReader.updateTicker(code, isActive);
-    res.send("Element correctement mis à jour");
-})
+    try {
+        await TickerService.update(code, isActive);
+        res.status(200).json({message: "Element correctement mis à jour"});
+    }
+    catch (err) {
+        res.status(500).json({message: "Erreur lors de la mise à jour du ticker " + code})
+    }
+});
 
 module.exports = router;
