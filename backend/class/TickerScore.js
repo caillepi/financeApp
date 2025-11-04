@@ -1,20 +1,16 @@
 class TickerScore {
-    constructor(day, code, mm, macd, bollinger, rsi, score) {
-        this.day = day;
+    constructor(code, mm, macd, bollinger, rsi, score,
+        createdAt = new Date(), updatedAt = new Date(), scoreVersion = "v1"
+    ) {
         this.code = code;
         this.mm = mm;
         this.macd = macd;
         this.bollinger = bollinger;
         this.rsi = rsi;
         this.score = score;
-    }
-
-    getDay() {
-        return this.day;
-    }
-
-    setDay(day) {
-        this.day = day;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.scoreVersion = scoreVersion;
     }
 
     getCode() {
@@ -23,6 +19,7 @@ class TickerScore {
 
     setCode(code) {
         this.code = code;
+        updateTimestamp();
     }
 
     getMm() {
@@ -31,6 +28,7 @@ class TickerScore {
 
     setMm(mm) {
         this.mm = mm;
+        updateTimestamp();
     }
 
     getMacd() {
@@ -39,6 +37,7 @@ class TickerScore {
 
     setMacd(macd) {
         this.macd = macd;
+        updateTimestamp();
     }
 
     getBollinger() {
@@ -47,6 +46,7 @@ class TickerScore {
 
     setBollinger(bollinger) {
         this.bollinger = bollinger;
+        updateTimestamp();
     }
 
     getRsi() {
@@ -55,6 +55,7 @@ class TickerScore {
 
     setRsi(rsi) {
         this.rsi = rsi;
+        updateTimestamp();
     }
 
     getScore() {
@@ -63,6 +64,50 @@ class TickerScore {
 
     setScore(score) {
         this.score = score;
+        updateTimestamp();
+    }
+
+    getCreatedAt() {
+        return this.createdAt;
+    }
+
+    setCreatedAt(createdAt) {
+        this.createdAt = createdAt;
+        updateTimestamp();
+    }
+
+    getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    setUpdatedAt(updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    getScoreVersion() {
+        return this.scoreVersion;
+    }
+
+    setScoreVersion(scoreVersion) {
+        this.scoreVersion = scoreVersion;
+    }
+
+    updateTimestamp() {
+        setUpdatedAt(new Date());
+    }
+
+    toDatabaseObject() {
+        return {
+            code: this.code,
+            mm: this.mm,
+            macd: this.macd,
+            bollinger: this.bollinger,
+            rsi: this.rsi,
+            score: this.score,
+            scoreVersion: this.scoreVersion,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt
+        }
     }
 }
 

@@ -175,9 +175,6 @@ export async function getTickersScoreWithDay(day) {
 
 export async function getTickersScoreWithTickerAndDay(ticker, day) {
   const data = await apiCall('/tickersScore/gettickerandday', { ticker, day });
-  if (data === 'N/A') {
-    return null;
-  }
   return data ? data[0] : null;
 }
 

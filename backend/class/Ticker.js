@@ -107,7 +107,7 @@ class Ticker {
 
     // Méthode pour mettre à jour le champ `updatedAt` à chaque modification
     updateTimestamp() {
-        this.updatedAt = new Date(); // Met à jour `updatedAt` à la date actuelle
+        setUpdatedAt(new Date()); // Met à jour `updatedAt` à la date actuelle
     }
 
     // Méthode pour convertir la classe en objet avant de l'insérer dans la BDD
@@ -121,7 +121,7 @@ class Ticker {
             industry: this.industry,
             is_active: this.isActive,
             created_at: this.createdAt,
-            updated_at: this.updatedAt,
+            updated_at: this.updatedAt
         };
     }
 }

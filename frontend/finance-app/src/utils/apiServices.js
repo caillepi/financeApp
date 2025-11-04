@@ -17,6 +17,7 @@ export async function apiCall(url, params = null, method = 'GET') {
     }
 
     const response = await axios(config); 
+
     response.data.status = response?.status;
     return response.data;
 
@@ -28,8 +29,8 @@ export async function apiCall(url, params = null, method = 'GET') {
       console.log('Utilisateur non authentifié, redirection vers /login');
       // Redirige éventuellement ici
     } else {
-      console.error('Erreur API:', data || err.message);
-      console.error(err);
+      console.error('Erreur API:', err.message);
+      throw err;
     }
 
     // Ajoute le statut à l'objet d'erreur renvoyé
