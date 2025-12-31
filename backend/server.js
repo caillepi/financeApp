@@ -14,8 +14,8 @@ const { withTicker } = require('./utils/routeUtils.js')
 
 // import des routes
 const sessionRouter = require('./route/sessionRoutes.js');
-const tickersCsvRouter = require('./route/tickersCsvRoutes.js');
-const tickersScoreCsvRouter = require('./route/tickersScoreCsvRoutes.js');
+const tickersRouter = require('./route/tickersRoutes.js');
+const tickersScoreRouter = require('./route/tickersScoreRoutes.js');
 const kpiRouter = require('./route/kpiRoutes.js');
 const enterpriseRouter = require('./route/enterpriseRoutes.js');
 const analystRouter = require('./route/analystRoutes.js');
@@ -49,8 +49,8 @@ app.use('/session', sessionRouter);
 app.use('/enterprise', isAuthenticated, enterpriseRouter);
 app.use('/analyst', isAuthenticated, analystRouter);
 app.use('/kpi', isAuthenticated, kpiRouter);
-app.use('/tickers', isAuthenticated, tickersCsvRouter);
-app.use('/tickersScore', isAuthenticated, tickersScoreCsvRouter);
+app.use('/tickers', isAuthenticated, tickersRouter);
+app.use('/tickersScore', isAuthenticated, tickersScoreRouter);
 app.use('/tickersExplore', isAuthenticated, tickersExplorerRouter);
 app.use('/screener', isAuthenticated, screenerRouter);
 

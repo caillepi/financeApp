@@ -10,6 +10,10 @@ function TickerList() {
         name: "",
         code: "",
         isActive: false,
+        sector: "",
+        industry: "",
+        exchange: "",
+        currency: ""
     });
     const { changeTicker } = useTicker ();
     const { tickersList, changeTickersList } = useTickersList();
@@ -81,17 +85,40 @@ function TickerList() {
         tickersList.forEach((ticker) => {
             if (ticker.code === form.code) {
                 alert("Le code de cette entreprise est déjà présent dans la liste.");
-                setForm({ name: form.name, code: "", isActive: form.isActive }); // reset
+                setForm({ name: form.name, 
+                    code: "", 
+                    isActive: form.isActive, 
+                    sector: form.sector, 
+                    industry: form.industry, 
+                    exchange: form.exchange, 
+                    currency: form.currency 
+                }); // reset
                 doublon = true;
             }
         })
 
         if (!doublon) {
-            await addTicker(form.name, form.code, form.isActive ? 1 : 0);
-            let newTicker = {name: form.name, code: form.code, isActive: form.isActive}
+            await addTicker(form.name, form.code, form.isActive ? 1 : 0, form.sector, form.industry, form.exchange, form.currency);
+            let newTicker = {
+                name: form.name, 
+                code: form.code, 
+                isActive: form.isActive,
+                sector: form.sector,
+                industry: form.industry,
+                exchange: form.exchange,
+                currency: form.currency
+            }
             changeTickersList([...tickersList, newTicker]);
     
-            setForm({ name: "", code: "", isActive: false }); // reset
+            setForm({ 
+                name: "", 
+                code: "", 
+                isActive: false,
+                sector: "",
+                industry: "",
+                exchange: "",
+                currency: ""
+            }); // reset
         }
 
     };
@@ -123,6 +150,34 @@ function TickerList() {
                         onChange={handleFormChange}
                     />
                 </label>
+                <input
+                    type="text"
+                    name="sector"
+                    placeholder="Secteur"
+                    value={form.sector}
+                    onChange={handleFormChange}
+                />
+                <input
+                    type="text"
+                    name="industry"
+                    placeholder="Industrie"
+                    value={form.industry}
+                    onChange={handleFormChange}
+                />
+                <input
+                    type="text"
+                    name="exchange"
+                    placeholder="Marché"
+                    value={form.exchange}
+                    onChange={handleFormChange}
+                />
+                <input
+                    type="text"
+                    name="currency"
+                    placeholder="Monnaie"
+                    value={form.currency}
+                    onChange={handleFormChange}
+                />
                 <button type="submit">Ajouter</button>
             </form>
 
@@ -134,11 +189,15 @@ function TickerList() {
                         <th className="tickerlist-th tickerlist-th-nom">Nom</th>
                         <th className="tickerlist-th tickerlist-th-code">Code</th>
                         <th className="tickerlist-th tickerlist-th-actif">Actif</th>
+                        <th className="tickerlist-th tickerlist-th-actif">Secteur</th>
+                        <th className="tickerlist-th tickerlist-th-actif">Industrie</th>
+                        <th className="tickerlist-th tickerlist-th-actif">Marché</th>
+                        <th className="tickerlist-th tickerlist-th-actif">Monnaie</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
-                        tickersList.map(({ name, code, isActive }) => (
+                        tickersList.map(({ name, code, isActive, sector, industry, exchange, currency }) => (
                             <tr key={code}>
                                 <td className="tickerlist-td tickerlist-table-action">
                                     <button onClick={() => handleDeleteItem(code)} 
@@ -162,6 +221,10 @@ function TickerList() {
                                 <td className="tickerlist-td">
                                     <input type="checkbox" checked={isActive === 1} onChange={() => handleOnCheckBoxClicked(code)}/>
                                 </td>
+                                <td className="tickerlist-td">{sector}</td>
+                                <td className="tickerlist-td">{industry}</td>
+                                <td className="tickerlist-td">{exchange}</td>
+                                <td className="tickerlist-td">{currency}</td>
                             </tr>
                         ))
                     }
