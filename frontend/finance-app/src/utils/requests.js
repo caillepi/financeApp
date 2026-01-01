@@ -117,8 +117,8 @@ export async function getBollingerBand(ticker) {
  * Récupération des KPIs
  */
 export async function getKpiSma(ticker) {
-  const data = await apiCall('/kpi/close', { ticker });
-  return data.close;
+  const data = await apiCall('/kpi/sma', { ticker });
+  return data.sma;
 }
 
 export async function getKpiBollinger(ticker) {
@@ -170,7 +170,7 @@ export async function getTickersScoreWithTicker(code) {
 
 export async function getTickersScoreWithDay(day) {
   const data = await apiCall('/tickersScore/getday', { day });
-  return data.tickersScore;
+  return data;
 }
 
 export async function getTickersScoreWithTickerAndDay(ticker, day) {

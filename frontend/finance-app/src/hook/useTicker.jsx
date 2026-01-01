@@ -21,7 +21,7 @@ export function TickerContextProvider({ children }) {
             setTickerByDefault(false);
         }
         else if (tickersList.length === 0 && ticker === null) {
-            setTicker("CS.PA");
+            setTicker(null);
             setTickerByDefault(true);
         }
     }, [tickersList, ticker]);

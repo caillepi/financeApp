@@ -68,7 +68,7 @@ function ReportListFilter({ onFilterChange }) {
             <select 
                 name="isActive"
                 id="isActive"
-                value={filter.isActive}
+                value={filter.isActive ?? 2}
                 onChange={handleChange}
                 >
                 <option value="2">Tout</option>

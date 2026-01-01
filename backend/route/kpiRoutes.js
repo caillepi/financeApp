@@ -2,8 +2,8 @@ const express = require('express');
 const { withTicker } = require('../utils/routeUtils');
 const router = express.Router();
 
-router.get('/close', withTicker((req, res, _, analyst) => {
-    res.status(200).json({ close: analyst.getKpiSma() });
+router.get('/sma', withTicker((req, res, _, analyst) => {
+    res.status(200).json({ sma: analyst.getKpiSma() });
 }));
 
 router.get('/bollinger', withTicker((req, res, _, analyst) => {
