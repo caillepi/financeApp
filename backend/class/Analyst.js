@@ -466,8 +466,13 @@ class Analyst {
       for (let i = 0; i < averageGain.length; i++) {
         if (averageGain[i] === null || averageLoss[i] === null) {
           rsList.push(null);
-        } else {
-          rsList.push(averageLoss[i] / averageGain[i]);
+        } else if (averageLoss[i] === 0) {
+          rsList.push(100);
+        } else if (averageGain[i] === 0) {
+          rsList.push(0);
+        } 
+        else {
+          rsList.push(averageGain[i] / averageLoss[i]);
         }
       }
   
@@ -664,7 +669,7 @@ class Analyst {
         return null;
       }
 
-      return data.at(-1);
+      return Number.parseFloat(data.at(-1)).toFixed(2);
     }
 }
 

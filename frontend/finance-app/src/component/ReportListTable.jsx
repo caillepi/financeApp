@@ -153,7 +153,7 @@ function ReportListTable ({data, setData, setSortConfig}) {
                                 <td className="reportlist-td">{row.macd} ({row.macdYesterday})</td>
                                 <td className="reportlist-td">{row.bollinger} ({row.bollingerYesterday})</td>
                                 <td className="reportlist-td">{row.rsi} ({row.rsiYesterday})</td>
-                                <td className="reportlist-td">{row.score}</td>
+                                <td className="reportlist-td">{row.score} ({row.scoreYesterday})</td>
                             </tr>
                         )
                     })

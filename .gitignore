@@ -44,3 +44,6 @@ npm-debug.log
 
 # coverage (tests)
 coverage
+
+# git
+.gitconfig

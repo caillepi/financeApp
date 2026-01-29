@@ -1,4 +1,7 @@
-const yahooFinance = require('yahoo-finance2').default;
+const YahooFinance = require('yahoo-finance2').default;
+const yahooFinance = new YahooFinance({
+  suppressNotices: ["yahooSurvey"], // Désactive le message de survey
+});
 
 class Bourse {
     /**

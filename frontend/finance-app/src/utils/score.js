@@ -8,8 +8,9 @@ export function computeScore(sma, macd, bollinger, rsi) {
     let ponderationBollinger = 0.25;
     let ponderationRSI = 0.25;
 
-    return ponderationSMA * sma + 
+    return Number.parseFloat(ponderationSMA * sma + 
             ponderationMACD * macd + 
             ponderationBollinger * bollinger +
-            ponderationRSI * rsi;
+            ponderationRSI * rsi)
+            .toFixed(2);
 }

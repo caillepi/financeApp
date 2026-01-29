@@ -54,17 +54,15 @@ class TickerScoreService {
      */
     static async getByDate(date) {
         try {
-            const startOfDay = new Date(date);
-            startOfDay.setHours(0, 0, 0, 0); 
-
-            const endOfDay = new Date(date);
-            endOfDay.setHours(23, 59, 59, 999);
+            const [year, month, day] = date.split('-').map(Number);
+            const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+            const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
             const { data, error } = await pool
                 .from('tickerScore')
                 .select('*')
                 .gte('created_at', startOfDay.toISOString())
-                .lte('created_at', endOfDay.toISOString());
+                .lte('created_at', endOfDay.toISOString());           
 
             if (error) {
                 console.error('Erreur lors de la récupération des tickerScores pour la date ' + date);
@@ -81,11 +79,9 @@ class TickerScoreService {
 
     static async getByCodeAndDate(code, date) {
         try {
-            const startOfDay = new Date(date);
-            startOfDay.setHours(0, 0, 0, 0); 
-
-            const endOfDay = new Date(date);
-            endOfDay.setHours(23, 59, 59, 999);
+            const [year, month, day] = date.split('-').map(Number);
+            const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+            const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
             const { data, error } = await pool
                 .from('tickerScore')
