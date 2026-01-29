@@ -24,7 +24,7 @@ export function sortDataReport (data, sortConfig) {
     return sortable;
 }
 
-export function filterDataReport (data, filters) {
+export function filterDataReport (data, filters) {    
     return data.filter((item) => {
         // nom de l'entreprise
         const matchesName = item.name.toLowerCase().includes(filters.name.toLowerCase());
@@ -39,8 +39,8 @@ export function filterDataReport (data, filters) {
         const matchesNoteMax = filters.noteMax ? score <= parseFloat(filters.noteMax) : true;
         // isActive
         let matchesIsActive = true;
-        if (filters.isActive != 2) {
-            matchesIsActive = item.isActive == filters.isActive ? true : false;
+        if (filters.is_active != 2) {
+            matchesIsActive = item.is_active == filters.is_active ? true : false;
         }
         return matchesName && matchesCode && matchesCoursMin && matchesCoursMax && matchesNoteMin && matchesNoteMax && matchesIsActive;
     });

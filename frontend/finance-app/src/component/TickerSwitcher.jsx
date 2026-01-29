@@ -16,8 +16,8 @@ function TickerSwitcher() {
         <div id="tickerswitcher">
             <label htmlFor="ticker-select"></label>
             <select id="ticker-select" value={ticker ?? ""} onChange={handleChange}>
-                {tickersList !== null && tickersList.map(({ name, code, isActive }) => (
-                    <option key={code} value={code} style={{ fontWeight: isActive === 1 ? 700 : 300 }}>
+                {tickersList !== null && tickersList.map(({ name, code, is_active }) => (
+                    <option key={code} value={code} style={{ fontWeight: is_active === 1 ? 700 : 300 }}>
                         {name} ({code})
                     </option>
                 ))}

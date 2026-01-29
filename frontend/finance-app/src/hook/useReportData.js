@@ -1,24 +1,93 @@
 import { useEffect, useRef, useState } from "react";
-import { addTicker, addTickerScore, getCurrent, getDescription, getKpiBollinger, getKpiMacd, getKpiRsi, getKpiSma, getSector, getTickersScoreWithDay, getTickersScoreWithTickerAndDay, removeTickerScore } from "../utils/requests";
+import { addTickerScore, getCurrent, getDescription, getKpiBollinger, getKpiMacd,
+    getKpiRsi, getKpiSma, getSector, getTickersScoreWithDay} from "../utils/requests";
 import { getDay, getYesterday } from "../utils/day";
 import { computeScore } from "../utils/score";
 import { useAuthentification } from "./useAuthentication";
 
+const CACHE_DATA_KEY = "reportDataCache";
+const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 1 jour par exemple
+
 export function useReportData (tickersList, reloadProp, limit = 1) {
     const [reportData, setReportData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
     const [offset, setOffset] = useState(0);
     const { isAuthenticated } = useAuthentification();
-    const isFetchingRef = useRef(false);
+    const isFetchingRef = useRef(false);                // eviter de charger plusieurs fois le même ticker
+    const cacheRef = useRef({
+        date: null,                 // date de la donnée
+        tickersListSnapshot: [],    // copie brute de tickersList
+        data: []                    // données enrichie pour l'affichage dans la tableau
+    });
 
-    // pour le premier chargement
+    useEffect(() => {
+        const storedCache = localStorage.getItem(CACHE_DATA_KEY);
+        if (storedCache) {
+            try {
+                const parsed = JSON.parse(storedCache);
+                const now = Date.now();
+                if (!parsed.timestamp || now - parsed.timestamp > CACHE_TTL_MS) {
+                    localStorage.removeItem(CACHE_KEY);
+                } else {
+                    cacheRef.current = parsed.data;
+                }
+            } catch (err) {
+                console.error("Erreur lecture cache localStorage", err);
+            }
+        }
+    }, []);
+
+    // Sauvegarde du cache à chaque modification
+    const saveCache = () => {
+        try {
+            localStorage.setItem(CACHE_DATA_KEY, JSON.stringify({data : cacheRef.current, timestamp: Date.now()}));
+        } catch (err) {
+            console.error("Erreur sauvegarde cache localStorage", err);
+        }
+    };
+
+    // pour le premier chargement OU
+    // Reset offset et données si tickersList ou reloadProp change
     useEffect(() => {
         // si tickersList est vide, on ne peut rien faire
         if (tickersList.length === 0) return;
 
-        // on lance le premier chargement
-        setOffset(0); // on démarre de zéro
-        setReportData([]); // on efface toutes les données actuelles
+        // date du jour
+        const today = getDay();
+        
+        // Si cache invalide ou liste des tickers modifiée, on reset
+        // comparaison de deux tableaux : 
+        // - cacheRef.current.tickersListSnapshot
+        // - tickersList
+        // Si un code à changer entre la liste des tickers actuels et ce que l'on a enregistré dans la ref -> TRUE
+        // sinon, pas de changement -> FALSE
+        const tickersListChanged = (() => {
+            const cachedCodes = new Set(cacheRef.current.tickersListSnapshot.map(t => t.code));
+            const currentCodes = new Set(tickersList.map(t => t.code));
+
+            if (cachedCodes.size !== currentCodes.size) return true;
+
+            for (let code of cachedCodes) {
+                if (!currentCodes.has(code)) return true;
+            }
+
+            return false;
+        })();
+
+        console.log(tickersListChanged);
+        
+        if (!cacheRef.current.date || cacheRef.current.date !== today || tickersListChanged) {
+            //console.log("Rechargement des données");
+            
+            cacheRef.current = {
+                date: today,
+                tickersListSnapshot: [...tickersList],
+                data: []
+            };
+            saveCache();
+
+            setOffset(0);
+            setReportData([]);
+        }
     }, [tickersList, reloadProp]);
 
     // pour le second chargement et après (déplacement de l'offset)
@@ -34,9 +103,8 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
 
         const fetchData = async () => {
             try {
-                setIsLoading(true);
                 let result = [];                    // données à afficher
-                let dataToStore = [];               // données à enregistrer en base
+
                 const today = getDay();             // aujourd'hui
                 const yesterday = getYesterday();   // hier
 
@@ -49,33 +117,31 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
                     const ticker = tickersList[i];
                     console.log("Chargement de " + ticker.name + ", i = " + i);
 
-                    // 1. Je regarde dans la BDD s'il y a des données pour le ticker en question (aujourd'hui et hier)
+                    // si je trouve dans le cache le ticker en question
+                    let cachedTicker = cacheRef.current.data.find((t) => t.code === ticker.code);
+                    if (cachedTicker) {
+                        result.push(cachedTicker);
+                        continue;
+                    }
+
+                    // si je ne trouve rien dans le cache
+                    // Je regarde dans la BDD s'il y a des données pour le ticker en question (aujourd'hui et hier)
                     let tScoreToday = tickersScoreForTheDay.filter((elt) => elt.code == ticker.code)[0]
                     let tScoreYesterday = tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0]
-
-                    // Pour le moment, s'il y a des données pour aujourd'hui, je les prends en compte
-                    // Pour plus tard // TODO
-                    // 1.1. Stratégie
-                    // 1.1.1. S'il y a moins d'une heure entre maintenant et le dernier enregistrement
-                    // Je récupère les données de la BDD et je les affiche directement
-                    // 1.1.2. S'il y a plus d'une heure entre maintenant et le dernier enregistrement
-                    // Je recalcule et je remplace les données dans la BDD
 
                     // variables pour mes données
                     var dataKpiSma = null;
                     var dataKpiBollinger = null;
                     var dataKpiMacd = null;
                     var dataKpiRsi = null;
+
+                    // les données dont j'ai besoin dans tous les cas 
                     var dataCurrent = await getCurrent(ticker.code);
                     var dataSector = await getSector(ticker.code);
                     var dataDescription = await getDescription(ticker.code);
 
-                    // booleen pour savoir si j'ai un enregistrement pour aujourd'hui
-                    let hasTickerScore = false;
-
                     // si on a trouvé un enregistrement dans la BDD du jour
-                    if (tScoreToday !== undefined) {
-                        hasTickerScore = true;
+                    if (tScoreToday) {
                         try {
                             dataKpiSma = tScoreToday.mm;
                             dataKpiBollinger = tScoreToday.bollinger;
@@ -87,7 +153,7 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
                         }
                     }
 
-                    // 2. S'il n'y a aucun enregistrement pour le ticker dans la BDD pour la date en question (journée)
+                    // S'il n'y a aucun enregistrement pour le ticker dans la BDD pour la date en question (journée)
                     else {
                         try {
                             // récupération des données via l'API
@@ -105,71 +171,62 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
                     let scoreComputed = computeScore(dataKpiSma, dataKpiMacd, dataKpiBollinger, dataKpiRsi);
 
                     // A cette etape, on a récupéré toutes les données nécessaires et disponibles à mon tableau pour mon ticker
-                    // J'enregistre les données dans 'result' pour les afficger par la suite
 
-                    result.push({
+                    const tickerData = {
                         code: ticker.code,
                         name: ticker.name,
                         sector: dataSector,
                         description: dataDescription,
                         current: dataCurrent,
                         sma: dataKpiSma,
-                        smaYesterday: tScoreYesterday === undefined ? null : tScoreYesterday.mm,
+                        smaYesterday: tScoreYesterday?.mm || null,
                         bollinger: dataKpiBollinger,
-                        bollingerYesterday: tScoreYesterday === undefined ? null : tScoreYesterday.bollinger,
+                        bollingerYesterday: tScoreYesterday?.bollinger || null,
                         rsi: dataKpiRsi,
-                        rsiYesterday: tScoreYesterday === undefined ? null : tScoreYesterday.rsi,
+                        rsiYesterday: tScoreYesterday?.rsi || null,
                         macd: dataKpiMacd,
-                        macdYesterday: tScoreYesterday === undefined ? null : tScoreYesterday.macd,
+                        macdYesterday: tScoreYesterday?.macd || null,
                         score: scoreComputed,
-                        scoreYesterday: tScoreYesterday === undefined ? null : tScoreYesterday.score,
-                        isActive: ticker.isActive
-                    });
+                        scoreYesterday: tScoreYesterday?.score || null,
+                        is_active: ticker.is_active
+                    };
 
-                    // J'enregistre les donnees à enregistrer en BDD
-                    dataToStore.push({
-                        code: ticker.code,
-                        sma: dataKpiSma,
-                        bollinger: dataKpiBollinger,
-                        rsi: dataKpiRsi,
-                        macd: dataKpiMacd,
-                        score: scoreComputed,
-                        hasTickerScore: hasTickerScore
-                    })
+                    // ajout au tableau pour affichage
+                    result.push(tickerData);
+                    // ajout au cache
+                    cacheRef.current.data.push(tickerData); 
+                    // sauvegarde dans le cache
+                    saveCache();
+
+                    // enregistrement en BDD
+                    if (!tScoreToday) {
+                        await addTickerScore(today, 
+                            ticker.code, 
+                            ticker.sma, 
+                            ticker.macd, 
+                            ticker.bollinger, 
+                            ticker.rsi, 
+                            ticker.score);
+                    }
                 }
 
-                /**
-                 * Partie 3 : Utilisation de la structure remplie précédemment pour affichage et modification du système de pagination
-                 */
-                // merge into local state
+                // on met à jour l'état local reportData
                 setReportData(prevData => {
+                    // ensemble de tous les codes des tickers SANS doublons (Set)
                     const existingCodes = new Set(prevData.map(item => item.code));
+                    // données des tickers pas encore présents dans les données
                     const newData = result.filter(item => !existingCodes.has(item.code));
+                    // on ajoute les anciens avec les nouveaux
                     return [...prevData, ...newData];
                 });
-
-                // Je parcours mes données à enregistrer
-                // Si déjà présent, je ne fais rien
-                // Si pas présent, alors j'enregistre
-                dataToStore.forEach((elt) => {
-                    if (elt.hasTickerScore) {                                   // Si j'ai trouvé mon entreprise
-                        // je ne fais rien pour le moment // TODO 
-                        // removeTickerScore(ticker.code, today);              // je supprime et remplace
-                        // addTickerScore(today, elt.code, elt.sma, elt.mm, elt.macd, elt.rsi, elt.score);
-                    }
-                    else {                                                  // Sinon pas mon entreprise pour aujourd'hui, j'écris
-                        addTickerScore(today, elt.code, elt.sma, elt.macd, elt.bollinger, elt.rsi, elt.score);
-                    }
-                })
 
                 // charger la suite uniquement si nécessaire
                 if (offset + limit < tickersList.length) {
                     setOffset(prev => prev + limit);
                 }
-
             }
             catch (err) {
-                console.error("Error while executing fetchData function in useReportData : ", err);
+                console.error("Error in fetchData in useReportData : ", err);
             }
             finally {
                 isFetchingRef.current = false;

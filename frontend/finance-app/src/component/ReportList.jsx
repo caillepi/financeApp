@@ -16,7 +16,7 @@ function ReportList() {
     const { reportData, setReportData, offset, setOffset } = useReportData(tickersList, reloadProp, limit);
 
     const [sortConfig, setSortConfig] = useState({key: null, direction: 'asc'});
-    const [filters, setFilters] = useState({name: '', code: '', coursMin: '', coursMax: '', noteMin: '', noteMax: '', isActive: 2});
+    const [filters, setFilters] = useState({name: '', code: '', coursMin: '', coursMax: '', noteMin: '', noteMax: '', is_active: 2});
 
     const emailContent = useRef();
 

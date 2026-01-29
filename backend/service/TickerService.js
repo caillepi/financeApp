@@ -87,7 +87,7 @@ class TickerService {
 
     static async update(code, updates) {
         try {
-            const { data, error } = await pool.from('ticker').update(updates).eq('code', code);
+            const { data, error } = await pool.from('ticker').update(updates).eq('code', code);            
 
             if (error) {
                 console.error('Erreur de la modification du ticker ' + code);

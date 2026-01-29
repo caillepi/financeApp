@@ -43,7 +43,7 @@ router.get('/remove', async (req, res) => {
 router.get('/update', async (req, res) => {
     const { code, isActive } = req.query;
     try {
-        await TickerService.update(code, isActive);
+        await TickerService.update(code, {"is_active": isActive});
         res.status(200).json({message: "Element correctement mis à jour"});
     }
     catch (err) {

@@ -9,7 +9,7 @@ function TickerList() {
     const [form, setForm] = useState({
         name: "",
         code: "",
-        isActive: false,
+        is_active: false,
         sector: "",
         industry: "",
         exchange: "",
@@ -24,7 +24,7 @@ function TickerList() {
             if (ticker.code == code) {
                 return {
                     ...ticker,
-                    isActive: ticker.isActive === 1 ? 0 : 1
+                    is_active: ticker.is_active === true ? false : true
                 };
             }
             else {
@@ -36,12 +36,12 @@ function TickerList() {
     }
 
     async function handleUpdateItem (code, isActive) {
-        await updateTicker(code, isActive ? 1 : 0);
+        await updateTicker(code, isActive ? true : false);
         let data = tickersList.map((ticker) => {
             if (ticker.code == code) {
                 return {
                     ...ticker,
-                    isActive: isActive
+                    is_active: isActive
                 };
             }
             else {
@@ -87,7 +87,7 @@ function TickerList() {
                 alert("Le code de cette entreprise est déjà présent dans la liste.");
                 setForm({ name: form.name, 
                     code: "", 
-                    isActive: form.isActive, 
+                    is_active: form.is_active, 
                     sector: form.sector, 
                     industry: form.industry, 
                     exchange: form.exchange, 
@@ -98,11 +98,11 @@ function TickerList() {
         })
 
         if (!doublon) {
-            await addTicker(form.name, form.code, form.isActive ? 1 : 0, form.sector, form.industry, form.exchange, form.currency);
+            await addTicker(form.name, form.code, form.is_active ? true : false, form.sector, form.industry, form.exchange, form.currency);
             let newTicker = {
                 name: form.name, 
                 code: form.code, 
-                isActive: form.isActive,
+                is_active: form.is_active,
                 sector: form.sector,
                 industry: form.industry,
                 exchange: form.exchange,
@@ -113,7 +113,7 @@ function TickerList() {
             setForm({ 
                 name: "", 
                 code: "", 
-                isActive: false,
+                is_active: false,
                 sector: "",
                 industry: "",
                 exchange: "",
@@ -145,8 +145,8 @@ function TickerList() {
                     Actif
                     <input
                         type="checkbox"
-                        name="isActive"
-                        checked={form.isActive}
+                        name="is_active"
+                        checked={form.is_active}
                         onChange={handleFormChange}
                     />
                 </label>
@@ -197,7 +197,7 @@ function TickerList() {
                 </thead>
                 <tbody>
                     {
-                        tickersList.map(({ name, code, isActive, sector, industry, exchange, currency }) => (
+                        tickersList.map(({ name, code, is_active, sector, industry, exchange, currency }) => (
                             <tr key={code}>
                                 <td className="tickerlist-td tickerlist-table-action">
                                     <button onClick={() => handleDeleteItem(code)} 
@@ -205,7 +205,7 @@ function TickerList() {
                                             style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                                         🗑️
                                     </button>
-                                    <button onClick={() => handleUpdateItem(code, isActive)} 
+                                    <button onClick={() => handleUpdateItem(code, is_active)} 
                                             title="Mettre à jour" 
                                             style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                                         📝
@@ -219,7 +219,7 @@ function TickerList() {
                                 <td className="tickerlist-td">{name}</td>
                                 <td className="tickerlist-td">{code}</td>
                                 <td className="tickerlist-td">
-                                    <input type="checkbox" checked={isActive === 1} onChange={() => handleOnCheckBoxClicked(code)}/>
+                                    <input type="checkbox" checked={is_active === true} onChange={() => handleOnCheckBoxClicked(code)}/>
                                 </td>
                                 <td className="tickerlist-td">{sector}</td>
                                 <td className="tickerlist-td">{industry}</td>

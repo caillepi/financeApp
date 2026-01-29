@@ -9,7 +9,7 @@ function ReportListFilter({ onFilterChange }) {
         coursMax: '',
         noteMin: '',
         noteMax: '',
-        isActive: 2
+        is_active: 2
     });
 
     const handleChange = (e) => {
@@ -64,11 +64,11 @@ function ReportListFilter({ onFilterChange }) {
                 value={filter.noteMax}
                 onChange={handleChange}
             />
-            <label htmlFor="isActive">isActive</label>
+            <label htmlFor="is_active">is_active</label>
             <select 
-                name="isActive"
-                id="isActive"
-                value={filter.isActive ?? 2}
+                name="is_active"
+                id="is_active"
+                value={filter.is_active ?? 2}
                 onChange={handleChange}
                 >
                 <option value="2">Tout</option>
