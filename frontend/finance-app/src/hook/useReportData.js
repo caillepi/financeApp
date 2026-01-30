@@ -21,6 +21,8 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
 
     useEffect(() => {
         const storedCache = localStorage.getItem(CACHE_DATA_KEY);
+        // console.log("CACHE");
+        // console.log(storedCache);
         if (storedCache) {
             try {
                 const parsed = JSON.parse(storedCache);
@@ -179,15 +181,15 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
                         description: dataDescription,
                         current: dataCurrent,
                         sma: dataKpiSma,
-                        smaYesterday: tScoreYesterday?.mm || null,
+                        smaYesterday: tScoreYesterday?.mm ?? null,
                         bollinger: dataKpiBollinger,
-                        bollingerYesterday: tScoreYesterday?.bollinger || null,
+                        bollingerYesterday: tScoreYesterday?.bollinger ?? null,
                         rsi: dataKpiRsi,
-                        rsiYesterday: tScoreYesterday?.rsi || null,
+                        rsiYesterday: tScoreYesterday?.rsi ?? null,
                         macd: dataKpiMacd,
-                        macdYesterday: tScoreYesterday?.macd || null,
+                        macdYesterday: tScoreYesterday?.macd ?? null,
                         score: scoreComputed,
-                        scoreYesterday: tScoreYesterday?.score || null,
+                        scoreYesterday: tScoreYesterday?.score ?? null,
                         is_active: ticker.is_active
                     };
 
@@ -202,11 +204,11 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
                     if (!tScoreToday) {
                         await addTickerScore(today, 
                             ticker.code, 
-                            ticker.sma, 
-                            ticker.macd, 
-                            ticker.bollinger, 
-                            ticker.rsi, 
-                            ticker.score);
+                            dataKpiSma, 
+                            dataKpiMacd, 
+                            dataKpiBollinger, 
+                            dataKpiRsi, 
+                            scoreComputed);
                     }
                 }
 
