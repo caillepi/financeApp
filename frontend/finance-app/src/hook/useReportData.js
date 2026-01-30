@@ -21,8 +21,7 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
 
     useEffect(() => {
         const storedCache = localStorage.getItem(CACHE_DATA_KEY);
-        // console.log("CACHE");
-        // console.log(storedCache);
+
         if (storedCache) {
             try {
                 const parsed = JSON.parse(storedCache);
@@ -74,12 +73,8 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
 
             return false;
         })();
-
-        console.log(tickersListChanged);
         
-        if (!cacheRef.current.date || cacheRef.current.date !== today || tickersListChanged) {
-            //console.log("Rechargement des données");
-            
+        if (!cacheRef.current.date || cacheRef.current.date !== today || tickersListChanged) {            
             cacheRef.current = {
                 date: today,
                 tickersListSnapshot: [...tickersList],
@@ -117,7 +112,6 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
                 // je parcours la liste des tickers dans tickersList
                 for (let i = offset; (i < offset + limit) && (i < tickersList.length); i++) {
                     const ticker = tickersList[i];
-                    console.log("Chargement de " + ticker.name + ", i = " + i);
 
                     // si je trouve dans le cache le ticker en question
                     let cachedTicker = cacheRef.current.data.find((t) => t.code === ticker.code);
