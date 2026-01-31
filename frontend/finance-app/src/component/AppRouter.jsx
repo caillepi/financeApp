@@ -7,6 +7,7 @@ import NavBar from './NavBar';
 import ErrorPage from '../page/ErrorPage';
 import LoginPage from '../page/LoginPage';
 import { NavigationContextProvider } from '../hook/useNavigation.jsx';
+import WalletPage from '../page/WalletPage.jsx';
 
 function AppRouter () {
   return <>
@@ -19,6 +20,7 @@ function AppRouter () {
           <Route path='/login'  element = {<LoginPage />} />
           <Route path="/report" element = {<ListPage />} />
           <Route path="/ticker" element = {<TickerPage />} />
+          <Route path="/wallet" element = {<WalletPage />} />
           {/* Route par défaut : page d'erreur (la page n'existe pas) */}
           <Route path="/*"      element = {<ErrorPage />} />
         </Routes>

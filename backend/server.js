@@ -10,12 +10,12 @@ const app = express();
 const port = process.env.PORT || 5000;
 var cors = require('cors');
 
-const { withTicker } = require('./utils/routeUtils.js')
-
 // import des routes
 const sessionRouter = require('./route/sessionRoutes.js');
 const tickersRouter = require('./route/tickersRoutes.js');
 const tickersScoreRouter = require('./route/tickersScoreRoutes.js');
+const marketOrdersRouter = require('./route/marketOrdersRoutes.js');
+const marketTradesRouter = require('./route/marketTradesRoutes.js');
 const kpiRouter = require('./route/kpiRoutes.js');
 const enterpriseRouter = require('./route/enterpriseRoutes.js');
 const analystRouter = require('./route/analystRoutes.js');
@@ -51,6 +51,8 @@ app.use('/analyst', isAuthenticated, analystRouter);
 app.use('/kpi', isAuthenticated, kpiRouter);
 app.use('/tickers', isAuthenticated, tickersRouter);
 app.use('/tickersScore', isAuthenticated, tickersScoreRouter);
+app.use('/marketOrders', isAuthenticated, marketOrdersRouter);
+app.use('/marketTrades', isAuthenticated, marketTradesRouter);
 app.use('/tickersExplore', isAuthenticated, tickersExplorerRouter);
 app.use('/screener', isAuthenticated, screenerRouter);
 

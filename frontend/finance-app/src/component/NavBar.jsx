@@ -35,6 +35,9 @@ function NavBar () {
                     <Link to="/ticker">Tickers Management</Link>
                 </div>
                 <div className="navbar-item">
+                    <Link to="/wallet">My Wallet</Link>
+                </div>
+                <div className="navbar-item">
                     <TickerSwitcher />
                 </div>
                 <div className="navbar-item">

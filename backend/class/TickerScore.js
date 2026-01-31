@@ -96,7 +96,7 @@ class TickerScore {
         setUpdatedAt(new Date());
     }
 
-    toDatabaseObject() {
+    toJSON() {
         return {
             code: this.code,
             mm: this.mm,

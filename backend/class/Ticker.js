@@ -111,7 +111,7 @@ class Ticker {
     }
 
     // Méthode pour convertir la classe en objet avant de l'insérer dans la BDD
-    toDatabaseObject() {
+    toJSON() {
         return {
             name: this.name,
             code: this.code,
