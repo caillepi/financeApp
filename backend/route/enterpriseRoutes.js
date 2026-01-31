@@ -35,4 +35,10 @@ router.get('/high', withTicker((req, res, enterprise) => {
     res.status(200).json({ high: enterprise.getHigh() });
 }));
 
+/* Renvoie le dernier dividende donné */
+router.get('/dividend', withTicker((req, res, enterprise) => {
+    let data = enterprise.getDividend();
+    res.status(200).json({ dividend: data[0], dividendRate: data[1]});
+}));
+
 module.exports = router;

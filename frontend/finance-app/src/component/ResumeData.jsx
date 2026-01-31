@@ -4,7 +4,7 @@ import './ResumeData.css';
 import '../utils/general.css';
 import '../utils/color.css';
 import '../utils/font.css';
-import { getCurrent, getEnterpriseName, getHigh, getLastClose, getLastOpen, getLow, getMax, getMin } from "../utils/requests";
+import { getCurrent, getDividend, getEnterpriseName, getHigh, getLastClose, getLastOpen, getLow, getMax, getMin } from "../utils/requests";
 import { usePeriod } from "../hook/usePeriod";
 
 function ResumeData () {
@@ -16,6 +16,7 @@ function ResumeData () {
     const [lastClose, setLastClose] = useState(null);
     const [min, setMin] = useState(null);
     const [max, setMax] = useState(null);
+    const [dividend, setDivident] = useState([]);
     
     
     let delta = parseFloat(current - lastClose).toFixed(2);
@@ -33,10 +34,16 @@ function ResumeData () {
             setLastClose(await getLastClose(ticker));
             setMin(await getMin(ticker, period));
             setMax(await getMax(ticker, period));
+            setDivident(await getDividend(ticker));
         };
 
         fetchData();
-    }, [ticker, period])
+        
+    }, [ticker, period]);
+
+    useEffect(() => {
+        console.log(dividend.dividend);
+    }, [dividend])
 
     return <>
         <div id='resumedata'>
@@ -95,6 +102,19 @@ function ResumeData () {
                     <span className="resumedata-secondpart-right">
                         <span className="resumedata-secondpart-value">
                             {high} / {low}
+                        </span>
+                        <span className="resumedata-secondpart-currency">
+                            EUR
+                        </span>
+                    </span>
+                </div>
+                <div className="resumedata-secondpart-dividend">
+                    <span className="resumedata-secondpart-description">
+                        Dividend
+                    </span>
+                    <span className="resumedata-secondpart-right">
+                        <span className="resumedata-secondpart-value">
+                            {dividend.dividend ?? 'N/A'} ({(dividend.dividendRate * 100).toFixed(2) ?? 'N/A'}%)
                         </span>
                         <span className="resumedata-secondpart-currency">
                             EUR

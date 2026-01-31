@@ -32,7 +32,8 @@
 .resumedata-secondpart-current,
 .resumedata-secondpart-previousclose,
 .resumedata-secondpart-highlow,
-.resumedata-secondpart-open {
+.resumedata-secondpart-open,
+.resumedata-secondpart-dividend {
     display: flex;
     justify-content: space-between;
     align-items: center;

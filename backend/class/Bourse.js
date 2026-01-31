@@ -29,6 +29,7 @@ class Bourse {
         this.low = this.getLow();
         this.high = this.getHigh();
         this.sector = await this.getSector();
+        this.dividend = 0;
         this.history = await this.getHistory();
     }
 
@@ -61,6 +62,11 @@ class Bourse {
 
     getHigh() {
         return this.data?.regularMarketDayHigh || 'N/A';
+    }
+
+    getDividend() {
+        // ?? permet que si le dividende est à 0, on garde 0 et on n'a pas 'N/A'
+        return [this.data?.trailingAnnualDividendRate ?? 'N/A', this.data?.trailingAnnualDividendYield ?? 'N/A']
     }
 
     async getSector() {

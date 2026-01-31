@@ -31,6 +31,11 @@ export async function getDescription(ticker) {
   return data.description;
 }
 
+export async function getDividend(ticker) {
+  const data = await apiCall('/enterprise/dividend', { ticker });
+  return data; // dividend, dividendRate
+}
+
 export async function getLastOpen(ticker) {
   const data = await apiCall('/analyst/opendata', { ticker });
   if (data?.opendata === 'N/A') return null;
