@@ -41,10 +41,6 @@ function ResumeData () {
         
     }, [ticker, period]);
 
-    useEffect(() => {
-        console.log(dividend.dividend);
-    }, [dividend])
-
     return <>
         <div id='resumedata'>
             <div id="resumedata-firstpart">
