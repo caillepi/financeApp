@@ -1,6 +1,6 @@
 const express = require('express');
-const MarketTrade = require('../class/MarketTrade');
-const MarketTradesService = require('../service/MarketTradesService');
+const MarketTrade = require('../class/MarketTrades.js');
+const MarketTradesService = require('../service/MarketTradesService.js');
 const router = express.Router();
 
 /**
@@ -127,6 +127,86 @@ router.get('/remove', async (req, res) => {
         res.status(500).json({
             message: 'Erreur lors de la suppression des market trades pour le ticker ' + code + ' et le jour ' + day
         });
+    }
+});
+
+router.get('/quantityHeld', async (req, res) => {
+    const { code } = req.query;
+
+    try {
+        if (code == null) {
+            return res.status(400).json({ message: 'Code query parameter is empty' });
+        }
+
+        const quantity = await MarketTradesService.getQuantityHeldByCode(code);
+        res.status(200).json({ code, quantity });
+    }
+    catch (err) {
+        res.status(500).json({ message: 'Erreur lors de la récupération de la quantité détenue pour le ticker ' + code });
+    }
+});
+
+router.get('/averageBuyPrice', async (req, res) => {
+    const { code } = req.query;
+
+    try {
+        if (code == null) {
+            return res.status(400).json({ message: 'Code query parameter is empty' });
+        }
+
+        const averagePrice = await MarketTradesService.getAverageBuyPriceByCode(code);
+        res.status(200).json({ code, averageBuyPrice: averagePrice });
+    }
+    catch (err) {
+        res.status(500).json({ message: 'Erreur lors de la récupération du prix moyen d\'achat pour le ticker ' + code });
+    }
+});
+
+router.get('/averageBuyDate', async (req, res) => {
+    const { code } = req.query;
+
+    try {
+        if (code == null) {
+            return res.status(400).json({ message: 'Code query parameter is empty' });
+        }
+
+        const averageDate = await MarketTradesService.getAverageBuyDateByCode(code);
+        res.status(200).json({ code, averageBuyDate: averageDate });
+    }
+    catch (err) {
+        res.status(500).json({ message: 'Erreur lors de la récupération de la date moyenne d\'achat pour le ticker ' + code });
+    }
+});
+
+router.get('/currentValue', async (req, res) => {
+    const { code } = req.query;
+
+    try {
+        if (code == null) {
+            return res.status(400).json({ message: 'Code query parameter is empty' });
+        }
+
+        const currentValue = await MarketTradesService.getCurrentValueByCode(code);
+        res.status(200).json({ code, currentValue });
+    }
+    catch (err) {
+        res.status(500).json({ message: 'Erreur lors de la récupération de la valeur actuelle pour le ticker ' + code });
+    }
+});
+
+router.get('/profitLoss', async (req, res) => {
+    const { code, current } = req.query;
+
+    try {
+        if (code == null) {
+            return res.status(400).json({ message: 'Code query parameter is empty' });
+        }
+
+        const profitLoss = await MarketTradesService.getProfitLossByCode(code, current);
+        res.status(200).json({ code, profitLoss });
+    }
+    catch (err) {
+        res.status(500).json({ message: 'Erreur lors de la récupération du profit/loss pour le ticker ' + code });
     }
 });
 

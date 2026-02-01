@@ -1,6 +1,6 @@
 const express = require('express');
-const MarketOrder = require('../class/MarketOrder');
-const MarketOrdersService = require('../service/MarketOrdersService');
+const MarketOrder = require('../class/MarketOrders.js');
+const MarketOrdersService = require('../service/MarketOrdersService.js');
 const router = express.Router();
 
 /**

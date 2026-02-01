@@ -192,6 +192,94 @@ export async function addTickerScore(day, code, mm, macd, bollinger, rsi, score)
 }
 
 /**
+ * Interractions avec la base de données des market orders
+ */
+export async function getMarketOrders() {
+  const data = await apiCall('/marketOrders');
+  return data;
+} 
+
+export async function getMarketOrdersByTicker(ticker) {
+  const data = await apiCall('/marketOrders/getticker', { ticker });
+  return data;
+}
+
+export async function getMarketOrdersByDay(day) {
+  const data = await apiCall('/marketOrders/getday', { day });
+  return data;
+}
+
+export async function getMarketOrdersByTickerAndDay(ticker, day) {
+  const data = await apiCall('/marketOrders/gettickerandday', { ticker, day });
+  return data;
+}
+
+export async function addMarketOrder(code, type, quantity, price, date) {
+  return apiCall('/marketOrders/add', { code, type, quantity, price, date });
+}
+
+export async function removeMarketOrder(order_id) {
+  return apiCall('/marketOrders/remove', { order_id });
+}
+
+
+/**
+ * * Interractions avec la base de données des market trades
+ */
+export async function getMarketTrades() {
+  const data = await apiCall('/marketTrades');
+  return data;
+}
+
+export async function getMarketTradesByTicker(ticker) {
+  const data = await apiCall('/marketTrades/getticker', { ticker });
+  return data;
+} 
+
+export async function getMarketTradesByDay(day) {
+  const data = await apiCall('/marketTrades/getday', { day });
+  return data;
+} 
+
+export async function getMarketTradesByTickerAndDay(ticker, day) {
+  const data = await apiCall('/marketTrades/gettickerandday', { ticker, day });
+  return data;
+} 
+
+export async function addMarketTrade(code, order_id, trade_type, quantity, price, date) {
+  return apiCall('/marketTrades/add', { code, order_id, trade_type, quantity, price, date });
+}
+
+export async function removeMarketTrade(trade_id) {
+  return apiCall('/marketTrades/remove', { trade_id });
+}
+
+export async function quantityHeldByCode(code) {
+  const data = await apiCall('/marketTrades/quantityHeld', { code });
+  return data.quantity
+}
+
+export async function averageBuyPriceByCode(code) {
+  const data = await apiCall('/marketTrades/averageBuyPrice', { code });
+  return data.averageBuyPrice;
+}
+
+export async function averageBuyDateByCode(code) {
+  const data = await apiCall('/marketTrades/averageBuyDate', { code });
+  return data.averageBuyDate;
+}
+
+export async function currentValueByCode(code) {
+  const data = await apiCall('/marketTrades/currentValue', { code });
+  return data.currentValue;
+}
+
+export async function profitLossByCode(code, current) {
+  const data = await apiCall('/marketTrades/profitLoss', { code, current });
+  return data.profitLoss;
+}
+
+/**
  * Gestion des sessions
  */
 export async function apiLogin(username, password) {

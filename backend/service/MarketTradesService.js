@@ -156,6 +156,139 @@ class MarketTradesService {
             throw err;
         }
     }
+
+    static async getQuantityHeldByCode(code) {
+        try {
+            const { data, error } = await pool
+                .from('market_trades')
+                .select('trade_type, quantity')
+                .eq('code_ticker', code);
+
+            if (error) {
+                console.error('Error when retrieving quantity held for code ' + code);
+                throw new Error(error.message);
+            }
+
+            let totalQuantity = 0;
+
+            data.forEach(trade => {
+                if (trade.trade_type === 'buy') {
+                    totalQuantity += trade.quantity;
+                }
+                else if (trade.trade_type === 'sell') {
+                    totalQuantity -= trade.quantity;
+                }
+            });
+            return totalQuantity;
+        }
+        catch (err) {
+            console.error('Erreur interne à getQuantityHeldByCode : ', err);
+            throw err;
+        }
+    }
+
+    static async getAverageBuyPriceByCode(code) {
+        try {
+            const { data, error } = await pool
+                .from('market_trades')
+                .select('trade_type, quantity, price')
+                .eq('code_ticker', code);
+                
+            if (error) {
+                console.error('Error when retrieving average buy price for code ' + code);
+                throw new Error(error.message);
+            }
+
+            let totalValue = 0;
+            let totalQuantity = 0;
+
+            data.forEach(trade => {
+                if (trade.trade_type === 'buy') {
+                    totalValue += trade.quantity * trade.price;
+                    totalQuantity += trade.quantity;
+                }
+            });
+
+            return totalQuantity > 0 ? totalValue / totalQuantity : 0;
+        }
+        catch (err) {
+            console.error('Erreur interne à getAverageBuyPriceByCode : ', err);
+            throw err;
+        }
+    }
+
+    static async getAverageBuyDateByCode(code) {
+        try {
+            const { data, error } = await pool
+                .from('market_trades')
+                .select('trade_type, quantity, created_at')
+                .eq('code_ticker', code);
+                
+            if (error) {
+                console.error('Error when retrieving average buy date for code ' + code);
+                throw new Error(error.message);
+            }
+
+            let totalTimestamp = 0;
+            let count = 0;
+
+            data.forEach(trade => {
+                if (trade.trade_type === 'buy') {
+                    totalTimestamp += new Date(trade.created_at).getTime();
+                    count++;
+                }
+            });
+
+            return count > 0 ? new Date(totalTimestamp / count) : null;
+        }
+        catch (err) {
+            console.error('Erreur interne à getAverageBuyDateByCode : ', err);
+            throw err;
+        }
+    }
+
+    static async getCurrentValueByCode(code) {
+        try {
+            const { data, error } = await pool
+                .from('market_trades')
+                .select('trade_type, quantity, price')
+                .eq('code_ticker', code);
+
+            if (error) {
+                console.error('Error when retrieving current value for code ' + code);
+                throw new Error(error.message);
+            }
+
+            let totalValue = 0;
+            data.forEach(trade => {
+                if (trade.trade_type === 'buy') {
+                    totalValue += trade.quantity * trade.price;
+                }
+                else if (trade.trade_type === 'sell') {
+                    totalValue -= trade.quantity * trade.price;
+                }
+            });
+            
+            return totalValue;
+        }
+        catch (err) {
+            console.error('Erreur interne à getCurrentValueByCode : ', err);
+            throw err;
+        }
+    }
+
+    static async getProfitLossByCode(code, current) {
+        try {          
+            const quantityHeld = await this.getQuantityHeldByCode(code);
+            const averageBuyPrice = await this.getAverageBuyPriceByCode(code);
+            const profitLoss = quantityHeld * (current - averageBuyPrice);
+            return profitLoss;
+        }
+        catch (err) {
+            console.error('Erreur interne à getProfitLossByCode : ', err);
+            throw err;
+        }
+    }
 }
 
 module.exports = MarketTradesService;
