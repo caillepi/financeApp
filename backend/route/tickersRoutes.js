@@ -17,10 +17,19 @@ router.get('', async (req, res) => {
     }
 });
 
-router.get('/add', async (req, res) => {
-    const { name, code, isActive, sector, industry, exchange, currency } = req.query;
+router.post('/add', async (req, res) => {
+    const { ticker } = req.body;
     try {
-        let newTicker = new Ticker(name, code, isActive, sector, industry, exchange, currency);
+        let newTicker = new Ticker(
+            ticker.name,
+            ticker.code,
+            ticker.is_active,
+            ticker.sector,
+            ticker.industry,
+            ticker.exchange,
+            ticker.currency
+        );
+
         await TickerService.add(newTicker);
         res.status(200).json({message: "Element correctement ajouté"});
     }

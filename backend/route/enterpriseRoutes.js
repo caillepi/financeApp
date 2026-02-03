@@ -41,4 +41,38 @@ router.get('/dividend', withTicker((req, res, enterprise) => {
     res.status(200).json({ dividend: data[0], dividendRate: data[1]});
 }));
 
+router.get('/data', withTicker((req, res, enterprise) => {
+    res.status(200).json(enterprise.data);
+}));
+
+router.get('/industry', withTicker(async (req, res, enterprise) => {
+    const industry = await enterprise.getIndustry();
+    res.status(200).json({ industry });
+}));
+
+router.get('/exchange', withTicker(async (req, res, enterprise) => {
+    const exchangeName = await enterprise.getExchangeName();
+    res.status(200).json({ exchangeName });
+}));
+
+router.get('/currency', withTicker(async (req, res, enterprise) => {
+    const currency = await enterprise.getCurrency();
+    res.status(200).json({ currency });
+}));
+
+router.get('/primaryInfo', withTicker(async (req, res, enterprise) => {
+    const name = await enterprise.getName();
+    const sector = await enterprise.getSector();
+    const industry = await enterprise.getIndustry();
+    const exchangeName = await enterprise.getExchangeName();
+    const currency = await enterprise.getCurrency();
+    res.status(200).json({ 
+        name,
+        sector,
+        industry,
+        exchangeName,
+        currency
+    });
+}));
+
 module.exports = router;

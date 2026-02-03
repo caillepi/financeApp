@@ -79,6 +79,16 @@ class Bourse {
         }
     }
 
+    async getIndustry() {
+        try {
+            let data = await yahooFinance.quoteSummary(this.ticker, { modules: ['assetProfile'] });
+            return data.assetProfile?.industry;
+        } catch (error) {
+            console.error(`Error fetching industry (${this.ticker})`);
+            return 'N/A';
+        }
+    }
+
     async getDescription() {
         try {
             let data = await yahooFinance.quoteSummary(this.ticker, { modules: ['assetProfile'] });
@@ -87,6 +97,14 @@ class Bourse {
             console.error(`Error fetching ticker description (${this.ticker})`);
             return 'N/A';
         }
+    }
+
+    async getExchangeName() {
+        return this.data.fullExchangeName || 'N/A';
+    }
+
+    async getCurrency() {
+        return this.data.currency || 'N/A';
     }
 
     async getHistory() {

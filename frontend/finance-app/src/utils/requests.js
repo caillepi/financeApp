@@ -36,6 +36,11 @@ export async function getDividend(ticker) {
   return data; // dividend, dividendRate
 }
 
+export async function getPrimaryInfo(ticker) {
+  const data = await apiCall('/enterprise/primaryInfo', { ticker });
+  return data; // name, sector, industry, exchangeName, currency
+}
+
 export async function getLastOpen(ticker) {
   const data = await apiCall('/analyst/opendata', { ticker });
   if (data?.opendata === 'N/A') return null;
@@ -144,7 +149,7 @@ export async function getKpiRsi(ticker) {
 /**
  * Interactions avec la base de données des tickers
  */
-export async function   getTickers() {
+export async function getTickers() {
   return await apiCall('/tickers');
 }
 
@@ -152,8 +157,8 @@ export async function removeTicker(code) {
   return apiCall('/tickers/remove', { code });
 }
 
-export async function addTicker(name, code, isActive, sector, industry, exchange, currency) {
-  return apiCall('/tickers/add', { name, code, isActive, sector, industry, exchange, currency });
+export async function addTicker(ticker) {
+  return apiCall('/tickers/add', {ticker: ticker}, 'POST');
 }
 
 export async function updateTicker(code, isActive) {

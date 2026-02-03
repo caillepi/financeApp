@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { addTicker, removeTicker, updateTicker } from "../utils/requests"
+import { addTicker, getPrimaryInfo, removeTicker, updateTicker } from "../utils/requests"
 import './TickerList.css'
 import { useNavigate } from "react-router-dom";
 import { useTicker } from '../hook/useTicker';
@@ -7,13 +7,8 @@ import { useTickersList } from "../hook/useTickerList";
 
 function TickerList() {
     const [form, setForm] = useState({
-        name: "",
         code: "",
-        is_active: false,
-        sector: "",
-        industry: "",
-        exchange: "",
-        currency: ""
+        is_active: false
     });
     const { changeTicker } = useTicker ();
     const { tickersList, changeTickersList } = useTickersList();
@@ -75,8 +70,8 @@ function TickerList() {
     const handleAddTicker = async (e) => {
         e.preventDefault();
 
-        if (!form.name || !form.code) {
-            alert("Tous les champs doivent être remplis");
+        if (!form.code) {
+            alert("Merci de préciser le code de l'entreprise.");
             return;
         }
 
@@ -94,20 +89,24 @@ function TickerList() {
                     currency: form.currency 
                 }); // reset
                 doublon = true;
+                return;
             }
         })
 
         if (!doublon) {
-            await addTicker(form.name, form.code, form.is_active ? true : false, form.sector, form.industry, form.exchange, form.currency);
+            let primaryInfo = await getPrimaryInfo(form.code);
+          
             let newTicker = {
-                name: form.name, 
+                name: primaryInfo.name, 
                 code: form.code, 
                 is_active: form.is_active,
-                sector: form.sector,
-                industry: form.industry,
-                exchange: form.exchange,
-                currency: form.currency
+                sector: primaryInfo.sector,
+                industry: primaryInfo.industry,
+                exchange: primaryInfo.exchangeName,
+                currency: primaryInfo.currency
             }
+
+            await addTicker(newTicker)
             changeTickersList([...tickersList, newTicker]);
     
             setForm({ 
@@ -129,13 +128,6 @@ function TickerList() {
             <form onSubmit={handleAddTicker} style={{ marginBottom: "20px" }}>
                 <input
                     type="text"
-                    name="name"
-                    placeholder="Nom"
-                    value={form.name}
-                    onChange={handleFormChange}
-                />
-                <input
-                    type="text"
                     name="code"
                     placeholder="Code"
                     value={form.code}
@@ -150,34 +142,6 @@ function TickerList() {
                         onChange={handleFormChange}
                     />
                 </label>
-                <input
-                    type="text"
-                    name="sector"
-                    placeholder="Secteur"
-                    value={form.sector}
-                    onChange={handleFormChange}
-                />
-                <input
-                    type="text"
-                    name="industry"
-                    placeholder="Industrie"
-                    value={form.industry}
-                    onChange={handleFormChange}
-                />
-                <input
-                    type="text"
-                    name="exchange"
-                    placeholder="Marché"
-                    value={form.exchange}
-                    onChange={handleFormChange}
-                />
-                <input
-                    type="text"
-                    name="currency"
-                    placeholder="Monnaie"
-                    value={form.currency}
-                    onChange={handleFormChange}
-                />
                 <button type="submit">Ajouter</button>
             </form>
 
