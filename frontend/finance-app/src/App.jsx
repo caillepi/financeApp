@@ -1,10 +1,23 @@
+import { ThemeProvider } from '@mui/material/styles';
 import './App.css'
-import HomePage from './page/HomePage'
+import theme, { applyThemeToDocument } from './style/theme';
+import { useEffect } from 'react';
+import AppRouter from './component/AppRouter';
 
 function App() {
+    console.log("Component App rendered");
+    
+
+    useEffect(() => {
+        applyThemeToDocument(theme);
+        console.log('Theme applied to document');
+    }, []);
+
     return <>
         <div>
-            <HomePage />
+            <ThemeProvider theme={theme}>
+                <AppRouter />
+            </ThemeProvider>
         </div>
     </>
 }

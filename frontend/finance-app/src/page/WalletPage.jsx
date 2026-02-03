@@ -5,6 +5,11 @@ import { getMarketOrders, getMarketTrades } from "./../utils/requests.js";
 import { useTickersList } from "../hook/useTickerList.jsx";
 import './WalletPage.css';
 import { useWallet } from "../hook/useWallet.jsx";
+import WalletOrdersForm from "../component/WalletOrdersForm.jsx";
+import WalletTradesForm from "../component/WalletTradesForm.jsx";
+import Modal from "@mui/material/Modal";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 
 function WalletPage () {
     const [marketOrders, setMarketOrders] = useState(null);
@@ -13,6 +18,10 @@ function WalletPage () {
     const { tickersList } = useTickersList();
     const { navigate } = useNavigation();
     const { isAuthenticated } = useAuthentification();
+
+    // modale formulaire
+    const [openOrderModal, setOpenOrdersModal] = useState(false);
+    const [openTradesModal, setOpenTradesModal] = useState(false);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -43,6 +52,18 @@ function WalletPage () {
         return <div>Loading...</div>;
     }
 
+    // Style de la modale
+    const modalStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 600,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        p: 4,
+    };
+
     return <>
         <div id="walletpage">
             <table id="wallet-table">
@@ -72,8 +93,49 @@ function WalletPage () {
                     ))}
                 </tbody> 
             </table>
+
+            {/* Bouton pour ouvrir la modale */}
+            <Button
+                variant="contained"
+                onClick={() => setOpenOrdersModal(true)}
+                style={{ margin: '20px 0' }}
+            >
+                Ajouter un ordre
+            </Button>
+
+            <Button
+                variant="contained"
+                onClick={() => setOpenTradesModal(true)}
+                style={{ margin: '20px 20px' }}
+            >
+                Ajouter un trade
+            </Button>
+
+            <Modal
+                open={openOrderModal}
+                onClose={() => setOpenOrdersModal(false)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={modalStyle}>
+                    <WalletOrdersForm onClose={() => setOpenOrdersModal(false)} />
+                </Box>
+            </Modal>
+
+            <Modal
+                open={openTradesModal}
+                onClose={() => setOpenTradesModal(false)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={modalStyle}>
+                    <WalletTradesForm 
+                        orders={marketOrders}
+                        onClose={() => setOpenTradesModal(false)} />
+                </Box>
+            </Modal>
         </div>
     </>
 }
 
-export default WalletPage
+export default WalletPage;

@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "front": "cd frontend/finance-app && npm run dev",
+    "back": "cd backend && node server.js",
+    "backdev": "cd backend && nodemon server.js",
+    "supabase": "npx supabase start",
+    "dev": "concurrently --names \"FRONT,BACK\" --prefix-colors \"cyan,green\" \"npm run front\" \"npm run backdev\""
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11",
+    "supabase": "^2.74.4"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.7",
+    "concurrently": "^9.2.1"
+  }
+}

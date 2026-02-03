@@ -4,10 +4,10 @@ import './main.css'
 import { PeriodContextProvider } from './hook/usePeriod.jsx'
 import { ChartContextProvider } from './hook/useChart.jsx'
 import { TickerContextProvider } from './hook/useTicker.jsx'
-import AppRouter from './component/AppRouter.jsx'
 import { TickersListContextProvider } from './hook/useTickerList.jsx'
 import { AuthentificationContextProvider } from './hook/useAuthentication.jsx'
-import { WalletContext, WalletContextProvider } from './hook/useWallet.jsx'
+import { WalletContextProvider } from './hook/useWallet.jsx'
+import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -17,7 +17,7 @@ createRoot(document.getElementById('root')).render(
           <WalletContextProvider>
             <PeriodContextProvider>
               <ChartContextProvider>
-                  <AppRouter />
+                  <App />
               </ChartContextProvider>
             </PeriodContextProvider>
           </WalletContextProvider>
