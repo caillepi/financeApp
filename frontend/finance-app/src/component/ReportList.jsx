@@ -8,6 +8,8 @@ import ReportListActions from "./ReportListActions";
 import ReportListTable from "./ReportListTable";
 import { filterDataReport, reloadDataReport, sortDataReport } from "../utils/ReportListHelper";
 import { useReportData } from "../hook/useReportData";
+import LayoutSidebar from "./LayoutSidebar";
+import { Divider } from "@mui/material";
 
 function ReportList() {
     const { tickersList } = useTickersList();
@@ -24,25 +26,29 @@ function ReportList() {
     const filteredData = React.useMemo(() => filterDataReport(sortedData, filters), [sortedData, filters]);
 
     return <>
-        <div id="reportlist" ref={emailContent}>
-            {/* Mise en place des boutons d'actions */}
-            <ReportListActions
-                handleReloadData={() => reloadDataReport(setReportData, setOffset, setReloadProp)}
-                handleExportPDF={handleExportPDF}
-                handleSendEmail={handleSendEmail}
-                />
-
-            {/* Mise en place des filtres */}
-            <ReportListFilter 
-                onFilterChange = {setFilters}
-                />
-
-            {/* Mise en place des tableaux */}
-            <ReportListTable
-                data = { filteredData }
-                setData = { setReportData }
-                setSortConfig = { setSortConfig }
-                />
+        <div>
+            <LayoutSidebar
+                sidebar={
+                    <>
+                        <ReportListActions
+                            handleReloadData={() => reloadDataReport(setReportData, setOffset, setReloadProp)}
+                            handleExportPDF={handleExportPDF}
+                            handleSendEmail={handleSendEmail}
+                        />
+                        <Divider />
+                        <ReportListFilter onFilterChange = {setFilters} />
+                    </>
+                }
+                main={ 
+                    <>
+                        <ReportListTable
+                            data = { filteredData }
+                            setData = { setReportData }
+                            setSortConfig = { setSortConfig }
+                            />
+                    </>
+                }
+            />
         </div>
     </>
 }

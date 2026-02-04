@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import './ReportListFilter.css';
+import { Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+
+
 
 function ReportListFilter({ onFilterChange }) {
     const [filter, setFilter] = useState({
@@ -21,61 +24,97 @@ function ReportListFilter({ onFilterChange }) {
     };
 
     return <>
-        <div id="reportlistfilter">
-            <input
-                type="text"
-                name="name"
-                placeholder="Filtrer par nom"
-                value={filter.name}
-                onChange={handleChange}
-            />
-            <input
-                type="text"
-                name="code"
-                placeholder="Filtrer par code"
-                value={filter.code}
-                onChange={handleChange}
-            />
-            <input
-                type="number"
-                name="coursMin"
-                placeholder="Filtrer par cours minimal"
-                value={filter.coursMin}
-                onChange={handleChange}
-            />
-            <input
-                type="number"
-                name="coursMax"
-                placeholder="Filtrer par cours maximal"
-                value={filter.coursMax}
-                onChange={handleChange}
-            />
-            <input
-                type="number"
-                name="noteMin"
-                placeholder="Filtrer par note minimale"
-                value={filter.noteMin}
-                onChange={handleChange}
-            />
-            <input
-                type="number"
-                name="noteMax"
-                placeholder="Filtrer par note maximale"
-                value={filter.noteMax}
-                onChange={handleChange}
-            />
-            <label htmlFor="is_active">is_active</label>
-            <select 
-                name="is_active"
-                id="is_active"
-                value={filter.is_active ?? 2}
-                onChange={handleChange}
+        <Grid container spacing={3}>
+            <h2>Filtres</h2>
+            <Grid>
+                <InputLabel htmlFor="name">
+                    Nom
+                </InputLabel>
+                <TextField
+                    type="text"
+                    name="name"
+                    value={filter.name}
+                    onChange={handleChange}
+                    variant="standard"
+                />
+            </Grid>
+            <Grid>
+                <InputLabel htmlFor="code">
+                    Code
+                </InputLabel>
+                <TextField
+                    type="text"
+                    name="code"
+                    value={filter.code}
+                    onChange={handleChange}
+                    variant="standard"
+                />
+            </Grid>
+            <Grid>
+                <InputLabel htmlFor="coursMin">
+                    Cours minimal
+                </InputLabel>
+                <TextField
+                    type="number"
+                    name="coursMin"
+                    value={filter.coursMin}
+                    onChange={handleChange}
+                    variant="standard"
+                />
+            </Grid>
+            <Grid>
+                <InputLabel htmlFor="coursMax">
+                    Cours maximal
+                </InputLabel>
+                <TextField
+                    type="number"
+                    name="coursMax"
+                    value={filter.coursMax}
+                    onChange={handleChange}
+                    variant="standard"
+                />
+            </Grid>
+            <Grid>
+                <InputLabel htmlFor="noteMin">
+                    Score minimal
+                </InputLabel>
+                <TextField
+                    type="number"
+                    name="noteMin"
+                    value={filter.noteMin}
+                    onChange={handleChange}
+                    variant="standard"
+                />
+            </Grid>
+            <Grid>
+                <InputLabel htmlFor="noteMax">
+                    Score maximal
+                </InputLabel>
+                <TextField
+                    type="number"
+                    name="noteMax"
+                    value={filter.noteMax}
+                    onChange={handleChange}
+                    variant="standard"
+                />
+            </Grid>
+            <Grid>
+                <InputLabel id="is_active-label">Wallet</InputLabel>
+                <Select
+                    labelId="is_active-label"
+                    id="is_active"
+                    name="is_active"
+                    value={filter.is_active ?? 2}
+                    onChange={handleChange}
+                    label="is_active"
+                    variant="standard"
                 >
-                <option value="2">Tout</option>
-                <option value="1">Oui</option>
-                <option value="0">Non</option>
-            </select>
-        </div>
+                    <MenuItem value={2}>Tout</MenuItem>
+                    <MenuItem value={1}>Oui</MenuItem>
+                    <MenuItem value={0}>Non</MenuItem>
+                </Select>
+            </Grid>
+        </Grid>
     </>
 }
 

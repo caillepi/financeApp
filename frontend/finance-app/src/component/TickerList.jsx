@@ -4,6 +4,8 @@ import './TickerList.css'
 import { useNavigate } from "react-router-dom";
 import { useTicker } from '../hook/useTicker';
 import { useTickersList } from "../hook/useTickerList";
+import { Box, Button, Checkbox, FormControl, FormLabel, Grid, InputLabel, TextField, Toolbar } from "@mui/material";
+import LayoutSidebar from "./LayoutSidebar";
 
 function TickerList() {
     const [form, setForm] = useState({
@@ -123,78 +125,107 @@ function TickerList() {
     };
 
     return <>
-        <div id="tickerlist">
-            {/* Formulaire d'ajout */}
-            <form onSubmit={handleAddTicker} style={{ marginBottom: "20px" }}>
-                <input
-                    type="text"
-                    name="code"
-                    placeholder="Code"
-                    value={form.code}
-                    onChange={handleFormChange}
-                />
-                <label>
-                    Actif
-                    <input
-                        type="checkbox"
-                        name="is_active"
-                        checked={form.is_active}
-                        onChange={handleFormChange}
-                    />
-                </label>
-                <button type="submit">Ajouter</button>
-            </form>
-
-            {/* Tableau des tickers */}
-            <table id="tickerlist-table">
-                <thead>
-                    <tr>
-                        <th className="tickerlist-th tickerlist-th-action">Actions</th>
-                        <th className="tickerlist-th tickerlist-th-nom">Nom</th>
-                        <th className="tickerlist-th tickerlist-th-code">Code</th>
-                        <th className="tickerlist-th tickerlist-th-actif">Actif</th>
-                        <th className="tickerlist-th tickerlist-th-actif">Secteur</th>
-                        <th className="tickerlist-th tickerlist-th-actif">Industrie</th>
-                        <th className="tickerlist-th tickerlist-th-actif">Marché</th>
-                        <th className="tickerlist-th tickerlist-th-actif">Monnaie</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        tickersList.map(({ name, code, is_active, sector, industry, exchange, currency }) => (
-                            <tr key={code}>
-                                <td className="tickerlist-td tickerlist-table-action">
-                                    <button onClick={() => handleDeleteItem(code)} 
-                                            title="Supprimer" 
-                                            style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                                        🗑️
-                                    </button>
-                                    <button onClick={() => handleUpdateItem(code, is_active)} 
-                                            title="Mettre à jour" 
-                                            style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                                        📝
-                                    </button>
-                                    <button onClick={() => handleWatchItemDetails(code)} 
-                                            title="Voir le détail" 
-                                            style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                                        🔍
-                                    </button>
-                                </td> 
-                                <td className="tickerlist-td">{name}</td>
-                                <td className="tickerlist-td">{code}</td>
-                                <td className="tickerlist-td">
-                                    <input type="checkbox" checked={is_active === true} onChange={() => handleOnCheckBoxClicked(code)}/>
-                                </td>
-                                <td className="tickerlist-td">{sector}</td>
-                                <td className="tickerlist-td">{industry}</td>
-                                <td className="tickerlist-td">{exchange}</td>
-                                <td className="tickerlist-td">{currency}</td>
-                            </tr>
-                        ))
-                    }
-                </tbody>
-            </table>
-        </div>
+        <Grid container id="tickerlist">
+            <Toolbar disableGutters />
+            <LayoutSidebar
+                sidebar={
+                    <>
+                        <h2>Ajouter un ticker</h2>
+                        <Box
+                            component='form'
+                            onSubmit = {handleAddTicker}
+                            noValidate
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                width: '100%',
+                                gap: 3,
+                            }}
+                        >
+                            <FormControl>
+                                <FormLabel htmlFor ="code">
+                                    Code de l'entreprise
+                                </FormLabel>
+                                <TextField
+                                    type="text"
+                                    name="code"
+                                    placeholder="Code"
+                                    value={form.code}
+                                    onChange={handleFormChange}
+                                    variant="standard"
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel htmlFor='is_active'>
+                                    Actif ?
+                                </FormLabel>
+                                <Checkbox
+                                    name="is_active"
+                                    checked={form.is_active}
+                                    onChange={handleFormChange}
+                                />
+                            </FormControl>
+                            <Button type="submit">
+                                Ajouter
+                            </Button>
+                        </Box>
+                    </>
+                }
+                main={
+                    <>
+                        {/* Tableau des tickers */}
+                        <table id="tickerlist-table">
+                            <thead>
+                                <tr>
+                                    <th className="tickerlist-th tickerlist-th-action">Actions</th>
+                                    <th className="tickerlist-th tickerlist-th-nom">Nom</th>
+                                    <th className="tickerlist-th tickerlist-th-code">Code</th>
+                                    <th className="tickerlist-th tickerlist-th-actif">Actif</th>
+                                    <th className="tickerlist-th tickerlist-th-actif">Secteur</th>
+                                    <th className="tickerlist-th tickerlist-th-actif">Industrie</th>
+                                    <th className="tickerlist-th tickerlist-th-actif">Marché</th>
+                                    <th className="tickerlist-th tickerlist-th-actif">Monnaie</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    tickersList.map(({ name, code, is_active, sector, industry, exchange, currency }) => (
+                                        <tr key={code}>
+                                            <td className="tickerlist-td tickerlist-table-action">
+                                                <button onClick={() => handleDeleteItem(code)} 
+                                                        title="Supprimer" 
+                                                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                                                    🗑️
+                                                </button>
+                                                <button onClick={() => handleUpdateItem(code, is_active)} 
+                                                        title="Mettre à jour" 
+                                                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                                                    📝
+                                                </button>
+                                                <button onClick={() => handleWatchItemDetails(code)} 
+                                                        title="Voir le détail" 
+                                                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                                                    🔍
+                                                </button>
+                                            </td> 
+                                            <td className="tickerlist-td">{name}</td>
+                                            <td className="tickerlist-td">{code}</td>
+                                            <td className="tickerlist-td">
+                                                <input type="checkbox" checked={is_active === true} onChange={() => handleOnCheckBoxClicked(code)}/>
+                                            </td>
+                                            <td className="tickerlist-td">{sector}</td>
+                                            <td className="tickerlist-td">{industry}</td>
+                                            <td className="tickerlist-td">{exchange}</td>
+                                            <td className="tickerlist-td">{currency}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </>
+                }
+            />
+        </Grid>
     </>
 }
 
