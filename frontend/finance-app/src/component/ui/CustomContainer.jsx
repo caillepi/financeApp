@@ -34,7 +34,6 @@ const CustomContainer = ({
           p: disableGutters ? 0 : 2,
           ...sx,
         };
-      case 'centered':
       default:
         return {
           width: '100%',
