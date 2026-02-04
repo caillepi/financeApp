@@ -44,8 +44,8 @@ export function AuthentificationContextProvider({children}) {
         setIsAuthenticated(!isAuthenticated);
     }
 
-    const login = async (username, password) => {
-        const res = await apiLogin(username, password);
+    const login = async (form) => {
+        const res = await apiLogin(form);
         if (res?.status === 200) {
             setUser(res.user);
             setIsAuthenticated(true);

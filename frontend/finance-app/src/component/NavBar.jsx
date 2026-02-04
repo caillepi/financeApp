@@ -10,11 +10,7 @@ function NavBar () {
     const { logout } = useAuthentification();
 
     if (location.pathname === '/login') {
-        return <>
-            <div>
-                <h1>Connexion</h1>
-            </div>
-        </>
+        return;
     }
 
     const handleLogout = () => {

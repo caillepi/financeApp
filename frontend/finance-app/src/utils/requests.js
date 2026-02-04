@@ -287,9 +287,9 @@ export async function profitLossByCode(code, current) {
 /**
  * Gestion des sessions
  */
-export async function apiLogin(username, password) {
+export async function apiLogin(form) {
   try {
-    const response = await apiCall('/session/login', { username, password }, "POST");
+    const response = await apiCall('/session/login', {form: form}, "POST");
     return response;
   } catch (err) {
     console.log(err);

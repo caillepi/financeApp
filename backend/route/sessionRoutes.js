@@ -9,21 +9,32 @@ const users = [
 
 // Route de connexion
 router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    const user = users.find(u => u.username === username);
+    const { form } = req.body;    
 
-    if (user) {
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (isMatch) {
-                req.session.user = user;
-                return res.status(200).json({ message: 'Connexion réussie', user: req.session.user });
-            } else {
-                return res.status(400).json({ message: 'Identifiants incorrects', user: null });
-            }
-        });
-    } else {
-        return res.status(400).json({ message: 'Utilisateur non trouvé', user: null });
+    try {
+        let data = {
+            username: form.username,
+            password: form.password
+        }
+
+        const user = users.find(u => u.username === data.username);
+
+        if (user) {
+            bcrypt.compare(data.password, user.password, (err, isMatch) => {
+                if (isMatch) {
+                    req.session.user = user;
+                    return res.status(200).json({ message: 'Connexion réussie', user: req.session.user });
+                } else {
+                    return res.status(400).json({ message: 'Données de connexion invalides', user: null });
+                }
+            });
+        } else {
+            return res.status(400).json({ message: 'Données de connexion invalides', user: null });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: 'Erreur lors de la connexion', err, user: null });
     }
+
 });
 
 // Route de déconnexion

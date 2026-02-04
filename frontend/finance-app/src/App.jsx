@@ -5,9 +5,6 @@ import { useEffect } from 'react';
 import AppRouter from './component/AppRouter';
 
 function App() {
-    console.log("Component App rendered");
-    
-
     useEffect(() => {
         applyThemeToDocument(theme);
         console.log('Theme applied to document');
