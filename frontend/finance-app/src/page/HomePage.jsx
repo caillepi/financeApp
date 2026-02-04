@@ -7,6 +7,7 @@ import { useAuthentification } from '../hook/useAuthentication.jsx';
 import { useNavigation } from '../hook/useNavigation.jsx';
 import { useEffect } from 'react';
 import { useTicker } from '../hook/useTicker.jsx';
+import { Toolbar } from '@mui/material';
 
 function HomePage () {
     const { navigate } = useNavigation();
@@ -27,6 +28,7 @@ function HomePage () {
     if (isAuthenticated) {
         return <>
             <div id='homepage'>
+                <Toolbar disableGutters/>
                 <div id='homepage-title'>
                     <span id='homepage-title-resume'>
                         <ResumeData />

@@ -126,7 +126,6 @@ function TickerList() {
 
     return <>
         <Grid container id="tickerlist">
-            <Toolbar disableGutters />
             <LayoutSidebar
                 sidebar={
                     <>

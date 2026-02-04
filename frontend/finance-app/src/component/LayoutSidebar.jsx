@@ -34,7 +34,7 @@ function LayoutSidebar({ sidebar, main }) {
           p: 3,
         }}
       >
-        <Toolbar />
+        <Toolbar disableGutters />
         {main}
       </Box>
 

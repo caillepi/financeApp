@@ -1,3 +1,4 @@
+import { Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 function WalletTradesForm({ orders }) {
@@ -80,7 +81,7 @@ function WalletTradesForm({ orders }) {
     }, [formData.code_ticker]);
 
     return (
-        <div>
+        <Grid container color='text.primary'>
             <form onSubmit={handleSubmit}>
                 <h2>Market Trades</h2>
 
@@ -187,7 +188,7 @@ function WalletTradesForm({ orders }) {
                     </>
                 )}
             </form>
-        </div>
+        </Grid>
     );
 }
 

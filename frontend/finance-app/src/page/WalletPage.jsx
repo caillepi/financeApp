@@ -10,6 +10,8 @@ import WalletTradesForm from "../component/WalletTradesForm.jsx";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { Grid, Toolbar } from "@mui/material";
+import LayoutSidebar from "../component/LayoutSidebar.jsx";
 
 function WalletPage () {
     const [marketOrders, setMarketOrders] = useState(null);
@@ -65,76 +67,86 @@ function WalletPage () {
     };
 
     return <>
-        <div id="walletpage">
-            <table id="wallet-table">
-                <thead className="wallet-thead">
-                    <tr className="wallet-tr">
-                        <th className="wallet-th">Ticker</th>
-                        <th className="wallet-th">Quantity Held</th>
-                        <th className="wallet-th">Average Buy Price</th>
-                        <th className="wallet-th">Current Value</th>
-                        <th className="wallet-th">Profit/Loss</th>
-                        <th className="wallet-th">Last Price</th>
-                        <th className="wallet-th">Average Buy Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {tickersList.map((ticker) => (
-                        ticker.is_active &&
-                        <tr key={ticker.code}>
-                            <td className="wallet-td">{ticker.name} ({ticker.code})</td>
-                            <td className="wallet-td">{wallet && wallet[ticker.code] ? wallet[ticker.code].quantityHeld.toFixed(0) : 'N/A'}</td>
-                            <td className="wallet-td">{wallet && wallet[ticker.code] ? wallet[ticker.code].averageBuyPrice.toFixed(2) : 'N/A'} EUR</td>
-                            <td className="wallet-td">{wallet && wallet[ticker.code] ? wallet[ticker.code].currentValue.toFixed(2) : 'N/A'} EUR</td>
-                            <td className={`wallet-td ${wallet && wallet[ticker.code] && wallet[ticker.code].profitLoss >= 0 ? 'profit' : 'loss'}`}>{wallet && wallet[ticker.code] ? wallet[ticker.code].profitLoss.toFixed(2) : 'N/A'} EUR</td>
-                            <td className="wallet-td">{wallet && wallet[ticker.code] ? wallet[ticker.code].current.toFixed(2) : 'N/A'} EUR</td>
-                            <td className="wallet-td">{wallet && wallet[ticker.code] ? new Date(wallet[ticker.code].averageBuyDate).toLocaleDateString() : 'N/A'}</td>   
-                        </tr>
-                    ))}
-                </tbody> 
-            </table>
+        <Grid container id="walletpage">
+            <LayoutSidebar
+                sidebar={
+                    <>
+                        <h2>Actions</h2>
+                        
+                        <Button
+                            variant="contained"
+                            onClick={() => setOpenOrdersModal(true)}
+                            style={{ margin: '20px 0' }}
+                        >
+                            Ajouter un ordre
+                        </Button>
 
-            {/* Bouton pour ouvrir la modale */}
-            <Button
-                variant="contained"
-                onClick={() => setOpenOrdersModal(true)}
-                style={{ margin: '20px 0' }}
-            >
-                Ajouter un ordre
-            </Button>
+                        <Button
+                            variant="contained"
+                            onClick={() => setOpenTradesModal(true)}
+                            style={{ margin: '20px 20px' }}
+                        >
+                            Ajouter un trade
+                        </Button>
 
-            <Button
-                variant="contained"
-                onClick={() => setOpenTradesModal(true)}
-                style={{ margin: '20px 20px' }}
-            >
-                Ajouter un trade
-            </Button>
+                        <Modal
+                            open={openOrderModal}
+                            onClose={() => setOpenOrdersModal(false)}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box sx={modalStyle}>
+                                <WalletOrdersForm onClose={() => setOpenOrdersModal(false)} />
+                            </Box>
+                        </Modal>
 
-            <Modal
-                open={openOrderModal}
-                onClose={() => setOpenOrdersModal(false)}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={modalStyle}>
-                    <WalletOrdersForm onClose={() => setOpenOrdersModal(false)} />
-                </Box>
-            </Modal>
-
-            <Modal
-                open={openTradesModal}
-                onClose={() => setOpenTradesModal(false)}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={modalStyle}>
-                    <WalletTradesForm 
-                        orders={marketOrders}
-                        onClose={() => setOpenTradesModal(false)} />
-                </Box>
-            </Modal>
-        </div>
+                        <Modal
+                            open={openTradesModal}
+                            onClose={() => setOpenTradesModal(false)}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box sx={modalStyle}>
+                                <WalletTradesForm 
+                                    orders={marketOrders}
+                                    onClose={() => setOpenTradesModal(false)} />
+                            </Box>
+                        </Modal>
+                    </>
+                }
+                main = {
+                    <>
+                        <table id="wallet-table">
+                            <thead className="wallet-thead">
+                                <tr className="wallet-tr">
+                                    <th className="wallet-th">Ticker</th>
+                                    <th className="wallet-th">Quantity Held</th>
+                                    <th className="wallet-th">Average Buy Price</th>
+                                    <th className="wallet-th">Current Value</th>
+                                    <th className="wallet-th">Profit/Loss</th>
+                                    <th className="wallet-th">Last Price</th>
+                                    <th className="wallet-th">Average Buy Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tickersList.map((ticker) => (
+                                    ticker.is_active &&
+                                    <tr key={ticker.code}>
+                                        <td className="wallet-td">{ticker.name} ({ticker.code})</td>
+                                        <td className="wallet-td">{wallet && wallet[ticker.code] ? wallet[ticker.code].quantityHeld.toFixed(0) : 'N/A'}</td>
+                                        <td className="wallet-td">{wallet && wallet[ticker.code] ? wallet[ticker.code].averageBuyPrice.toFixed(2) : 'N/A'} EUR</td>
+                                        <td className="wallet-td">{wallet && wallet[ticker.code] ? wallet[ticker.code].currentValue.toFixed(2) : 'N/A'} EUR</td>
+                                        <td className={`wallet-td ${wallet && wallet[ticker.code] && wallet[ticker.code].profitLoss >= 0 ? 'profit' : 'loss'}`}>{wallet && wallet[ticker.code] ? wallet[ticker.code].profitLoss.toFixed(2) : 'N/A'} EUR</td>
+                                        <td className="wallet-td">{wallet && wallet[ticker.code] ? wallet[ticker.code].current.toFixed(2) : 'N/A'} EUR</td>
+                                        <td className="wallet-td">{wallet && wallet[ticker.code] ? new Date(wallet[ticker.code].averageBuyDate).toLocaleDateString() : 'N/A'}</td>   
+                                    </tr>
+                                ))}
+                            </tbody> 
+                        </table>
+                    </>
+                }
+            />
+        </Grid>
     </>
 }
 

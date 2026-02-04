@@ -1,3 +1,4 @@
+import { Grid } from "@mui/material";
 import React from "react";
 
 function WalletOrdersForm() {
@@ -36,7 +37,7 @@ function WalletOrdersForm() {
     }
 
     return (
-        <div>
+        <Grid container color = 'text.primary'>
             <form onSubmit={handleSubmit}>
                 <h2>Market Orders</h2>
                 {/* Form fields for market orders go here */}
@@ -160,7 +161,7 @@ function WalletOrdersForm() {
 
                 <button type="submit">Submit Order</button>
             </form>
-        </div>
+        </Grid>
     );
 }
 
