@@ -10,6 +10,7 @@ import { useTicker } from '../hook/useTicker';
 import { usePeriod } from '../hook/usePeriod';
 import RsiChart from './RsiChart';
 import VolumeData from './VolumeData';
+import { Box, Grid } from '@mui/material';
 
 function GeneralChart () {
     const [date, setDate] = useState([]);
@@ -37,46 +38,53 @@ function GeneralChart () {
     const { chart } = useChart();
 
     return <>
-        <div id="generalchart">
-            <div className='generalchart-charts'>
+        <Grid id="generalchart">
+            <Box 
+                className='generalchart-charts'
+                sx={{
+                    p: 0,
+                    m: 0,
+                    width: '100%'
+                }}
+            >
                 {
                     chart === "CLOSE_CHART" &&
-                        <div className='generalchart-closedata'>
+                        <Box className='generalchart-closedata'>
                             <CloseData {...dataProps} />
-                        </div>
+                        </Box>
                 }
                 {
                     chart === "CANDLESTICK_CHART" &&
-                        <div className="generalchart-bollingerband">
+                        <Box className="generalchart-bollingerband">
                             <Candlestick {...dataProps} />
-                        </div>
+                        </Box>
                 }
                 {
                     chart === "BOLLINGER_BAND_CHART" &&
-                        <div className="generalchart-bollingerband">
+                        <Box className="generalchart-bollingerband">
                             <BollingerBand {...dataProps} />
-                        </div>
+                        </Box>
                 }
                 {
                     chart === "MACD_CHART" &&
-                        <div className="generalchart-macd">
+                        <Box className="generalchart-macd">
                             <Macd {...dataProps} />
-                        </div>
+                        </Box>
                 }
                 {
                     chart === "RSI_CHART" &&
-                        <div className="generalchart-macd">
+                        <Box className="generalchart-macd">
                             <RsiChart {...dataProps} />
-                        </div>
+                        </Box>
                 }
                 {
                     chart === "VOLUME_CHART" &&
-                        <div className="generalchart-macd">
+                        <Box className="generalchart-macd">
                             <VolumeData {...dataProps} />
-                        </div>
+                        </Box>
                 }
-            </div>
-        </div>
+            </Box>
+        </Grid>
     </>
 }
 

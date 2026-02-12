@@ -1,11 +1,36 @@
 import { useEffect, useState } from "react";
 import { useTicker } from "../hook/useTicker";
-import './ResumeData.css';
 import '../utils/general.css';
 import '../utils/color.css';
 import '../utils/font.css';
-import { getCurrent, getDividend, getEnterpriseName, getHigh, getLastClose, getLastOpen, getLow, getMax, getMin } from "../utils/requests";
+import { computeScore } from "../utils/score";
+import { getCurrent, getDividend, getEnterpriseName, getHigh, getLastClose, getLastOpen, getLow, getMax, getMin, getKpiBollinger, getKpiMacd, getKpiRsi, getKpiSma } from "../utils/requests";
 import { usePeriod } from "../hook/usePeriod";
+import { Grid } from "@mui/material";
+
+function ShowData ({label, data}) {
+    return <>
+        <Grid
+            item
+            direction="column"
+            xs={12}
+            sx={{ justifyContent: "flex-start", alignItems: "flex-start" }}
+        >
+            <Grid item
+                xs={12}
+                sx={{ color: "grey", fontWeight: "600", textTransform: "uppercase", fontSize: '0.7em', marginBottom: '3px' }}
+            >
+                {label}
+            </Grid>
+            <Grid item
+                xs={12}
+                sx={{ color: "black", fontWeight: "600", fontSize: '0.9em' }}
+            >
+                    {data}
+            </Grid>
+        </Grid>
+    </>
+}
 
 function ResumeData () {
     const [enterpriseName, setEnterpriseName] = useState(null);
@@ -14,6 +39,11 @@ function ResumeData () {
     const [high, setHigh] = useState(null);
     const [lastOpen, setLastOpen] = useState(null);
     const [lastClose, setLastClose] = useState(null);
+    const [kpiSma, setKpiSma] = useState(50);
+    const [kpiBollinger, setKpiBollinger] = useState(50);
+    const [kpiMacd, setKpiMacd] = useState(50);
+    const [kpiRsi, setKpiRsi] = useState(50);
+    const [volume, setVolume] = useState(null);
     const [min, setMin] = useState(null);
     const [max, setMax] = useState(null);
     const [dividend, setDivident] = useState([]);
@@ -35,6 +65,10 @@ function ResumeData () {
             setMin(await getMin(ticker, period));
             setMax(await getMax(ticker, period));
             setDivident(await getDividend(ticker));
+            setKpiSma(await getKpiSma(ticker));
+            setKpiBollinger(await getKpiBollinger(ticker));
+            setKpiMacd(await getKpiMacd(ticker));
+            setKpiRsi(await getKpiRsi(ticker));
         };
 
         fetchData();
@@ -42,83 +76,81 @@ function ResumeData () {
     }, [ticker, period]);
 
     return <>
-        <div id='resumedata'>
-            <div id="resumedata-firstpart">
-                <div className="bold">
+        <Grid container direction="row" spacing={2}
+            sx={{ justifyContent: "flex-start", alignItems: "flex-start", width: "100%", maxHeight: "149px"}}
+        >
+            {/* First column */}
+            <Grid container item direction="column" size={4} spacing={1}
+                sx={{ justifyContent: 'space-between', alignItems: 'flex-start', height: '149px', borderRight: "black solid 1px", py: 2 }}
+            >
+                {/* Company */}
+                <Grid item size = {12} sx={{ fontWeight: '600', fontSize: '1.5em' }}>
                     {enterpriseName}
-                </div>
-                <div>
-                    <span className={isDeltaPositive ? "green" : "red"}>{delta > 0 ? "+ " : ""} {delta} EUR</span> ({parseFloat((current - lastClose)*100/lastClose).toFixed(2)}%)
-                </div>
-            </div>
-            <div id="resumedata-secondpart">
-                <div className="resumedata-secondpart-current">
-                    <span className="resumedata-secondpart-description">
-                        Current price
-                    </span>
-                    <span className="resumedata-secondpart-right">
-                        <span className="resumedata-secondpart-value">
-                            {current}
-                        </span>
-                        <span className="resumedata-secondpart-currency">
-                            EUR
-                        </span>
-                    </span>
-                </div>
-                <div className="resumedata-secondpart-previousclose">
-                    <span className="resumedata-secondpart-description">
-                        Previous close
-                    </span>
-                    <span className="resumedata-secondpart-right">
-                        <span className="resumedata-secondpart-value">
-                            {lastClose}
-                        </span>
-                        <span className="resumedata-secondpart-currency">
-                            EUR
-                        </span>
-                    </span>
-                </div>
-                <div className="resumedata-secondpart-open">
-                    <span className="resumedata-secondpart-description">
-                        Open
-                    </span>
-                    <span className="resumedata-secondpart-right">
-                        <span className="resumedata-secondpart-value">
-                            {lastOpen}
-                        </span>
-                        <span className="resumedata-secondpart-currency">
-                            EUR
-                        </span>
-                    </span>
-                </div>
-                <div className="resumedata-secondpart-highlow">
-                    <span className="resumedata-secondpart-description">
-                        Day High / Low
-                    </span>
-                    <span className="resumedata-secondpart-right">
-                        <span className="resumedata-secondpart-value">
-                            {high} / {low}
-                        </span>
-                        <span className="resumedata-secondpart-currency">
-                            EUR
-                        </span>
-                    </span>
-                </div>
-                <div className="resumedata-secondpart-dividend">
-                    <span className="resumedata-secondpart-description">
-                        Dividend
-                    </span>
-                    <span className="resumedata-secondpart-right">
-                        <span className="resumedata-secondpart-value">
-                            {dividend.dividend ?? 'N/A'} ({(dividend.dividendRate * 100).toFixed(2) ?? 'N/A'}%)
-                        </span>
-                        <span className="resumedata-secondpart-currency">
-                            EUR
-                        </span>
-                    </span>
-                </div>
-            </div>
-        </div>
+                </Grid>
+
+                {/* Current Stock Value */}
+                <Grid item size = {12}>
+                    <ShowData label = "cours actuel" data = {current} />
+                </Grid>
+
+                {/* Compared to yesterday */}
+                <Grid container item direction="row" size={12}
+                    sx={{ justifyContent: "center", alignItems: 'flex-start' }}
+                >
+                    <Grid item size={6}>
+                        <ShowData label = "delta" data = {delta} />
+                    </Grid>
+                    <Grid item size={6}>
+                        <ShowData label = "% delta" data = {parseFloat((current - lastClose)*100/lastClose).toFixed(2)} />
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            {/* Second column */}
+            <Grid container item direction="row" size={4} spacing={1}
+                sx={{ justifyContent: "center", alignItems: 'flex-start', borderRight: "black solid 1px", py: 2}}
+            >
+                {/* Left column */}
+                <Grid container item direction="column" size={6}
+                    sx={{ justifyContent: "center", alignItems: 'flex-start' }}
+                >
+                    <ShowData label = "ouverture" data = {lastOpen} />
+                    <ShowData label = "+ haut" data = {high} />
+                    <ShowData label = "dernier dividende" data = {dividend.dividend} />
+                </Grid>
+
+                {/* Right column */}
+                <Grid container item direction="column" size={6}
+                    sx={{ justifyContent: "center", alignItems: 'flex-start' }}
+                >
+                    <ShowData label = "clôture veille" data = {lastClose} />
+                    <ShowData label = "+ bas" data = {low} />
+                    <ShowData label = "% dividende" data = {(dividend.dividendRate * 100).toFixed(2) ?? 'N/A'} />
+                </Grid>
+            </Grid>
+
+            {/* Third column */}
+            <Grid container item direction="row" size={4} spacing={1}
+                sx={{ justifyContent: "center", alignItems: 'flex-start', borderRight: "black solid 1px", py: 2 }}
+            >
+                {/* Left column */}
+                <Grid container item direction="column" size={6}
+                    sx={{ justifyContent: "center", alignItems: 'flex-start' }}
+                >
+                    <ShowData label = "Moyenne mobile" data = {kpiSma} />
+                    <ShowData label = "RSI" data = {kpiRsi} />
+                </Grid>
+
+                {/* Right column */}
+                <Grid container item direction="column" size={6}
+                    sx={{ justifyContent: "center", alignItems: 'flex-start' }}
+                >
+                    <ShowData label = "MACD" data = {kpiMacd} />
+                    <ShowData label = "Bollinger" data = {kpiBollinger} />
+                    <ShowData label = "Score" data = {computeScore(kpiSma, kpiMacd, kpiBollinger, kpiRsi)} />
+                </Grid>
+            </Grid>
+        </Grid>
     </>
 }
 

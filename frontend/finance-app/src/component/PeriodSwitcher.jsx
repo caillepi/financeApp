@@ -1,58 +1,37 @@
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { usePeriod } from "../hook/usePeriod";
-import './PeriodSwitcher.css'
 
 function PeriodSwitcher() {
-    const { changePeriod } = usePeriod();
+    const { period, changePeriod } = usePeriod();
 
     const handleOnChangePeriod = (e) => {
-        changePeriod(e.target.dataset.value);
+        changePeriod(e.target.value);
     }
 
     return <>
-        <div id="periodswitcher">
-            <div id="periodswitcher-1"
-                 className="period-choice"
-                 data-value="ONE_WEEK"
-                 onClick={handleOnChangePeriod}
-                 >
-                1 SEMAINE
-            </div>
-            <div id="periodswitcher-2"
-                 className="period-choice"
-                 data-value="ONE_MONTH"
-                 onClick={handleOnChangePeriod}
-                 >
-                1 MOIS
-            </div>
-            <div id="periodswitcher-3"
-                 className="period-choice"
-                 data-value="SIX_MONTHS"
-                 onClick={handleOnChangePeriod}
-                 >
-                6 MOIS
-            </div>
-            <div id="periodswitcher-4"
-                 className="period-choice"
-                 data-value="ONE_YEAR"
-                 onClick={handleOnChangePeriod}
-                 >
-                1 AN
-            </div>
-            <div id="periodswitcher-4"
-                 className="period-choice"
-                 data-value="TWO_YEARS"
-                 onClick={handleOnChangePeriod}
-                 >
-                2 ANS
-            </div>
-            <div id="periodswitcher-4"
-                 className="period-choice"
-                 data-value="FIVE_YEARS"
-                 onClick={handleOnChangePeriod}
-                 >
-                5 ANS
-            </div>
-        </div>
+        <FormControl fullWidth 
+            id="periodswitcher"
+            sx={{
+                p: 0,
+                m: 0,
+                backgroundColor: "transparent"
+            }}>
+            <InputLabel id='periodswitcher-label'>Durée</InputLabel>
+            <Select
+                labelId="periodswitcher-label"
+                id="periodswitcher"
+                value={period}
+                label="period"
+                onChange={handleOnChangePeriod}
+            >
+                <MenuItem value="ONE_WEEK">1W</MenuItem>
+                <MenuItem value="ONE_MONTH">1M</MenuItem>
+                <MenuItem value="SIX_MONTHS">6M</MenuItem>
+                <MenuItem value="ONE_YEAR">1Y</MenuItem>
+                <MenuItem value="TWO_YEAR">2Y</MenuItem>
+                <MenuItem value="FIVE_YEAR">5Y</MenuItem>
+            </Select>
+        </FormControl>
     </>
 }
 

@@ -7,7 +7,7 @@ let drawerWidth = 240;
 
 function LayoutSidebar({ sidebar, main }) {
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', width: '100%' }}>
       
       <Toolbar disableGutters />
       <Drawer

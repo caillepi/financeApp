@@ -1,87 +1,32 @@
-import { useEffect, useState } from "react";
 import { useChart } from "../hook/useChart";
-import './ChartChooser.css'
-import { getKpiBollinger, getKpiMacd, getKpiRsi, getKpiSma } from "../utils/requests";
-import { useTicker } from "../hook/useTicker";
-import ProgressBar from "./ProgressBar";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 function ChartChooser () {
-    const [kpiSma, setKpiSma] = useState(50);
-    const [kpiBollinger, setKpiBollinger] = useState(50);
-    const [kpiMacd, setKpiMacd] = useState(50);
-    const [kpiRsi, setKpiRsi] = useState(50);
-    const { changeChart } = useChart();
-    const { ticker } = useTicker();
+    const { chart, changeChart } = useChart();
 
-    useEffect(() => {
-        let fetchData = async () => {
-            setKpiSma(await getKpiSma(ticker));
-            setKpiBollinger(await getKpiBollinger(ticker));
-            setKpiMacd(await getKpiMacd(ticker));
-            setKpiRsi(await getKpiRsi(ticker));
-        }
-
-        fetchData();
-    }, [ticker]);
-
-    const handleOnClick = (e) => {
-        changeChart(e.currentTarget.dataset.value)
+    const handleOnChangeChart = (e) => {
+        changeChart(e.target.value);
     }
 
     return <>
-        <div id="chartchooser">
-            <div id="chooser-1" 
-                 className="chooser-choice"
-                 data-value="CLOSE_CHART"
-                 onClick={handleOnClick}>
-                <div className="chooser-content">
-                    <div>Clôture</div>
-                    <ProgressBar kpi={kpiSma} />
-                </div>
-            </div>
-            <div id="chooser-2" 
-                 className="chooser-choice"
-                 data-value="CANDLESTICK_CHART"
-                 onClick={handleOnClick}>
-                <div className="chooser-content">
-                    <div>Candlestick</div>
-                </div>
-            </div>
-            <div id="chooser-3" 
-                 className="chooser-choice"
-                 data-value="BOLLINGER_BAND_CHART"
-                 onClick={handleOnClick}>
-                <div className="chooser-content">
-                    <div>Bande de Bollinger</div>
-                    <ProgressBar kpi={kpiBollinger} />
-                </div>
-            </div>
-            <div id="chooser-4" 
-                 className="chooser-choice"
-                 data-value="MACD_CHART"
-                 onClick={handleOnClick}>
-                <div className="chooser-content">
-                    <div>MACD</div>
-                    <ProgressBar kpi={kpiMacd} />
-                </div>
-            </div>
-            <div id="chooser-4" 
-                 className="chooser-choice"
-                 data-value="RSI_CHART"
-                 onClick={handleOnClick}>
-                <div className="chooser-content">
-                    <div>RSI</div>
-                    <ProgressBar kpi={kpiRsi} />
-                </div>
-                
-            </div>
-            <div id="chooser-4" 
-                 className="chooser-choice"
-                 data-value="VOLUME_CHART"
-                 onClick={handleOnClick}>
-                Volume
-            </div>
-        </div>
+        <FormControl fullWidth
+        >
+            <InputLabel id="chartchooser-label">Chart chooser</InputLabel>
+            <Select
+                labelId="chartchosser-label"
+                id="chartchooser"
+                label="Chart Chooser"
+                value={chart}
+                onChange={handleOnChangeChart}
+            >
+                <MenuItem value="CLOSE_CHART">Clôture</MenuItem>
+                <MenuItem value="CANDLETICK_CHART">Bougie</MenuItem>
+                <MenuItem value="BOLLINGER_BAND_CHART">Bollinger</MenuItem>
+                <MenuItem value="MACD_CHART">MACD</MenuItem>
+                <MenuItem value="RSI_CHART">RSI</MenuItem>
+                <MenuItem value="VOLUME_CHART">Volume</MenuItem>
+            </Select>
+        </FormControl>
     </>
 }
 
