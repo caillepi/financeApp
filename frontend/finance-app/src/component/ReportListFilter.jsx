@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import './ReportListFilter.css';
-import { Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Box, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 
 
 
@@ -24,9 +24,11 @@ function ReportListFilter({ onFilterChange }) {
     };
 
     return <>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} direction="column"
+            sx={{ justifyContent: "flex-start", alignItems: "center" }}
+        >
             <h2>Filtres</h2>
-            <Grid>
+            <Grid item size={12}>
                 <InputLabel htmlFor="name">
                     Nom
                 </InputLabel>
@@ -38,7 +40,7 @@ function ReportListFilter({ onFilterChange }) {
                     variant="standard"
                 />
             </Grid>
-            <Grid>
+            <Grid item size={12}>
                 <InputLabel htmlFor="code">
                     Code
                 </InputLabel>
@@ -50,55 +52,60 @@ function ReportListFilter({ onFilterChange }) {
                     variant="standard"
                 />
             </Grid>
-            <Grid>
-                <InputLabel htmlFor="coursMin">
-                    Cours minimal
-                </InputLabel>
-                <TextField
-                    type="number"
-                    name="coursMin"
-                    value={filter.coursMin}
-                    onChange={handleChange}
-                    variant="standard"
-                />
+            
+            <Grid item container direction="column" spacing={1} size={12}>
+                <InputLabel htmlFor="cours-range">Cours (min - max)</InputLabel>
+                <Grid container item direction="row" spacing={1}>
+                    <Grid item size={6}>
+                        <TextField
+                            type="number"
+                            name="coursMin"
+                            value={filter.coursMin}
+                            onChange={handleChange}
+                            variant="standard"
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item size={6}>
+                        <TextField
+                            type="number"
+                            name="coursMax"
+                            value={filter.coursMax}
+                            onChange={handleChange}
+                            variant="standard"
+                            fullWidth
+                        />
+                    </Grid>
+                </Grid>
             </Grid>
-            <Grid>
-                <InputLabel htmlFor="coursMax">
-                    Cours maximal
-                </InputLabel>
-                <TextField
-                    type="number"
-                    name="coursMax"
-                    value={filter.coursMax}
-                    onChange={handleChange}
-                    variant="standard"
-                />
+
+            <Grid item container direction="column" spacing={1} size={12}>
+                <InputLabel htmlFor="cours-range">Score (min - max)</InputLabel>
+                <Grid container item direction="row" spacing={1}>
+                    <Grid item size={6}>
+                        <TextField
+                            type="number"
+                            name="noteMin"
+                            value={filter.noteMin}
+                            onChange={handleChange}
+                            variant="standard"
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item size={6}>
+                        <TextField
+                            type="number"
+                            name="noteMax"
+                            value={filter.noteMax}
+                            onChange={handleChange}
+                            variant="standard"
+                            fullWidth
+                        />
+                    </Grid>
+                </Grid>
             </Grid>
-            <Grid>
-                <InputLabel htmlFor="noteMin">
-                    Score minimal
-                </InputLabel>
-                <TextField
-                    type="number"
-                    name="noteMin"
-                    value={filter.noteMin}
-                    onChange={handleChange}
-                    variant="standard"
-                />
-            </Grid>
-            <Grid>
-                <InputLabel htmlFor="noteMax">
-                    Score maximal
-                </InputLabel>
-                <TextField
-                    type="number"
-                    name="noteMax"
-                    value={filter.noteMax}
-                    onChange={handleChange}
-                    variant="standard"
-                />
-            </Grid>
-            <Grid>
+
+            <Grid item size={12}>
                 <InputLabel id="is_active-label">Wallet</InputLabel>
                 <Select
                     labelId="is_active-label"
