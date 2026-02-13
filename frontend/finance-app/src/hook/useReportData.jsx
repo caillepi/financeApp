@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { addTickerScore, getCurrent, getDescription, getKpiBollinger, getKpiMacd,
     getKpiRsi, getKpiSma, getSector, getTickersScoreWithDay} from "../utils/requests";
 import { getDay, getYesterday } from "../utils/day";
@@ -6,9 +6,21 @@ import { computeScore } from "../utils/score";
 import { useAuthentification } from "./useAuthentication";
 
 const CACHE_DATA_KEY = "reportDataCache";
-const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 1 jour par exemple
+//const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 1 jour par exemple
+const CACHE_TTL_MS = 1000; // 1 seconde par exemple
 
-export function useReportData (tickersList, reloadProp, limit = 1) {
+export const ReportDataContext = createContext({
+    reportData: null,
+    changeReportData: () => {},
+    offset: null,
+    changeOffset: () => {}
+});
+
+export function useReportData() {
+    return useContext(ReportDataContext);
+}
+
+export function ReportDataContextProvider ({children, tickersList, reloadProp = false, limit = 1}) {
     const [reportData, setReportData] = useState([]);
     const [offset, setOffset] = useState(0);
     const { isAuthenticated } = useAuthentification();
@@ -27,7 +39,7 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
                 const parsed = JSON.parse(storedCache);
                 const now = Date.now();
                 if (!parsed.timestamp || now - parsed.timestamp > CACHE_TTL_MS) {
-                    localStorage.removeItem(CACHE_KEY);
+                    localStorage.removeItem(CACHE_DATA_KEY);
                 } else {
                     cacheRef.current = parsed.data;
                 }
@@ -132,9 +144,8 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
                     var dataKpiRsi = null;
 
                     // les données dont j'ai besoin dans tous les cas 
-                    var dataCurrent = await getCurrent(ticker.code);
-                    var dataSector = await getSector(ticker.code);
-                    var dataDescription = await getDescription(ticker.code);
+                    const [dataCurrent, dataSector, dataDescription]
+                        = await Promise.all([getCurrent(ticker.code), getSector(ticker.code), getDescription(ticker.code)]);
 
                     // si on a trouvé un enregistrement dans la BDD du jour
                     if (tScoreToday) {
@@ -232,5 +243,22 @@ export function useReportData (tickersList, reloadProp, limit = 1) {
         fetchData();
     }, [offset, tickersList, isAuthenticated]);
 
-    return { reportData, setReportData, offset, setOffset };
+    const changeReportData = (newReportData) => {
+        setReportData(newReportData);
+    }
+
+    const changeOffset = (newOffset) => {
+        setOffset(newOffset);
+    }
+
+    return (
+        <ReportDataContext.Provider value={{
+            reportData,
+            changeReportData,
+            offset,
+            changeOffset
+        }}>
+            {children}
+        </ReportDataContext.Provider>
+    )
 }

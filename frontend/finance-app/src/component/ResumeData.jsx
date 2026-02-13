@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
 import { useTicker } from "../hook/useTicker";
 import '../utils/general.css';
 import '../utils/color.css';
 import '../utils/font.css';
 import { computeScore } from "../utils/score";
-import { getCurrent, getDividend, getEnterpriseName, getHigh, getLastClose, getLastOpen, getLow, getMax, getMin, getKpiBollinger, getKpiMacd, getKpiRsi, getKpiSma } from "../utils/requests";
 import { usePeriod } from "../hook/usePeriod";
-import { Grid } from "@mui/material";
+import { Box, CircularProgress, Grid } from "@mui/material";
+import { useTickerData } from "../hook/useTickerData";
 
 function ShowData ({label, data}) {
     return <>
@@ -33,47 +32,36 @@ function ShowData ({label, data}) {
 }
 
 function ResumeData () {
-    const [enterpriseName, setEnterpriseName] = useState(null);
-    const [current, setCurrent] = useState(null);
-    const [low, setLow] = useState(null);
-    const [high, setHigh] = useState(null);
-    const [lastOpen, setLastOpen] = useState(null);
-    const [lastClose, setLastClose] = useState(null);
-    const [kpiSma, setKpiSma] = useState(50);
-    const [kpiBollinger, setKpiBollinger] = useState(50);
-    const [kpiMacd, setKpiMacd] = useState(50);
-    const [kpiRsi, setKpiRsi] = useState(50);
-    const [volume, setVolume] = useState(null);
-    const [min, setMin] = useState(null);
-    const [max, setMax] = useState(null);
-    const [dividend, setDivident] = useState([]);
-    
-    
-    let delta = parseFloat(current - lastClose).toFixed(2);
-    let isDeltaPositive = delta > 0;
     let { ticker } = useTicker();
     let { period } = usePeriod();
+    let { data, loading } = useTickerData(ticker, period);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setEnterpriseName(await getEnterpriseName(ticker));
-            setCurrent(await getCurrent(ticker));
-            setLow(await getLow(ticker));
-            setHigh(await getHigh(ticker));
-            setLastOpen(await getLastOpen(ticker));
-            setLastClose(await getLastClose(ticker));
-            setMin(await getMin(ticker, period));
-            setMax(await getMax(ticker, period));
-            setDivident(await getDividend(ticker));
-            setKpiSma(await getKpiSma(ticker));
-            setKpiBollinger(await getKpiBollinger(ticker));
-            setKpiMacd(await getKpiMacd(ticker));
-            setKpiRsi(await getKpiRsi(ticker));
-        };
-
-        fetchData();
+    if (loading || !data) 
+        return <>
+            <Box sx={{ display: 'flex' }}>
+                <CircularProgress color="success"/>
+            </Box>
         
-    }, [ticker, period]);
+        </>
+    if (loading) return <div>Chargement...</div>;
+    if (!data) return null;
+     
+    const {
+        enterpriseName,
+        current,
+        low,
+        high,
+        lastOpen,
+        lastClose,
+        dividend,
+        kpiSma,
+        kpiBollinger,
+        kpiMacd,
+        kpiRsi
+    } = data;
+
+    let delta = parseFloat(current - lastClose).toFixed(2);
+    let isDeltaPositive = delta > 0;
 
     return <>
         <Grid container direction="row" spacing={2}

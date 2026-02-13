@@ -24,12 +24,21 @@ export function WalletContextProvider({ children }) {
                     let initialWallet = {}; // choisit le premier ticker réel
                     for (const ticker of tickersList) {
                         if (ticker.is_active) {
-                            let current = await getCurrent(ticker.code);
-                            let quantityHeld = await quantityHeldByCode(ticker.code);
-                            let currentValue = await currentValueByCode(ticker.code);
-                            let profitLoss = await profitLossByCode(ticker.code, current);
-                            let averageBuyPrice = await averageBuyPriceByCode(ticker.code);
-                            let averageBuyDate = await averageBuyDateByCode(ticker.code);
+                            const [
+                                current,
+                                quantityHeld,
+                                currentValue,
+                                averageBuyPrice,
+                                averageBuyDate
+                            ] = await Promise.all([
+                                getCurrent(ticker.code),
+                                quantityHeldByCode(ticker.code),
+                                currentValueByCode(ticker.code),
+                                averageBuyPriceByCode(ticker.code),
+                                averageBuyDateByCode(ticker.code)
+                            ]);
+
+                            const profitLoss = await profitLossByCode(ticker.code, current);
 
                             initialWallet[ticker.code] = {
                                 quantityHeld: quantityHeld ?? 0,
