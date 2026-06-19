@@ -36,7 +36,7 @@ async function getAnalystFromTicker(ticker) {
  */
 function withTicker(handler) {
     return async (req, res) => {
-        const { ticker } = req.query;
+        const { ticker } = req.params;
         if (!ticker) return res.status(400).json({ error: 'Ticker manquant' });
 
         try {

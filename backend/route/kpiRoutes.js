@@ -2,19 +2,19 @@ const express = require('express');
 const { withTicker } = require('../utils/routeUtils');
 const router = express.Router();
 
-router.get('/sma', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/sma', withTicker((req, res, _, analyst) => {
     res.status(200).json({ sma: analyst.getKpiSma() });
 }));
 
-router.get('/bollinger', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/bollinger', withTicker((req, res, _, analyst) => {
     res.status(200).json({ bollinger: analyst.getKpiBollinger() });
 }));
 
-router.get('/macd', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/macd', withTicker((req, res, _, analyst) => {
     res.status(200).json({ macd: analyst.getKpiMacd() });
 }));
 
-router.get('/rsi', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/rsi', withTicker((req, res, _, analyst) => {
     res.status(200).json({ rsi: analyst.getKpiRsi() });
 }));
 

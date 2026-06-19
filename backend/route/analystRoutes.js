@@ -13,7 +13,7 @@ function checkPeriod(req, res) {
 }
 
 /* Renvoie le minimum sur une période donnée */
-router.get('/min', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/min', withTicker((req, res, _, analyst) => {
     const period = checkPeriod(req, res);
     if (!period) return;
 
@@ -26,7 +26,7 @@ router.get('/min', withTicker((req, res, _, analyst) => {
 }));
 
 /* Renvoie le maximum sur une période donnée */
-router.get('/max', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/max', withTicker((req, res, _, analyst) => {
     const period = checkPeriod(req, res);
     if (!period) return;
 
@@ -39,7 +39,7 @@ router.get('/max', withTicker((req, res, _, analyst) => {
 }));
 
 /* Liste des minimums sur la période */
-router.get('/mindata', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/mindata', withTicker((req, res, _, analyst) => {
     const period = checkPeriod(req, res);
     if (!period) return;
 
@@ -47,7 +47,7 @@ router.get('/mindata', withTicker((req, res, _, analyst) => {
 }));
 
 /* Liste des maximums sur la période */
-router.get('/maxdata', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/maxdata', withTicker((req, res, _, analyst) => {
     const period = checkPeriod(req, res);
     if (!period) return;
 
@@ -55,27 +55,27 @@ router.get('/maxdata', withTicker((req, res, _, analyst) => {
 }));
 
 /* Cours d'ouverture */
-router.get('/opendata', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/opendata', withTicker((req, res, _, analyst) => {
     res.status(200).json({ opendata: analyst.getOpenData() });
 }));
 
 /* Cours de fermeture */
-router.get('/closedata', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/closedata', withTicker((req, res, _, analyst) => {
     res.status(200).json({ closedata: analyst.getCloseData() });
 }));
 
 /* Volumes échangés */
-router.get('/volumedata', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/volumedata', withTicker((req, res, _, analyst) => {
     res.status(200).json({ volumedata: analyst.getVolumeData() });
 }));
 
 /* Dates de la période */
-router.get('/date', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/date', withTicker((req, res, _, analyst) => {
     res.status(200).json({ dates: analyst.getDateData() });
 }));
 
 /* Moyenne des cours de clôture */
-router.get('/mean', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/mean', withTicker((req, res, _, analyst) => {
     const period = checkPeriod(req, res);
     if (!period) return;
 
@@ -83,12 +83,12 @@ router.get('/mean', withTicker((req, res, _, analyst) => {
 }));
 
 /* RSI */
-router.get('/rsi', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/rsi', withTicker((req, res, _, analyst) => {
     res.status(200).json({ rsi: analyst.getRSI() });
 }));
 
 /* SMA */
-router.get('/sma', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/sma', withTicker((req, res, _, analyst) => {
     const period = checkPeriod(req, res);
     if (!period) return;
 
@@ -96,12 +96,12 @@ router.get('/sma', withTicker((req, res, _, analyst) => {
 }));
 
 /* MACD */
-router.get('/macd', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/macd', withTicker((req, res, _, analyst) => {
     res.status(200).json({ macd: analyst.getMACD() });
 }));
 
 /* EMA */
-router.get('/ema', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/ema', withTicker((req, res, _, analyst) => {
     const period = checkPeriod(req, res);
     if (!period) return;
 
@@ -109,7 +109,7 @@ router.get('/ema', withTicker((req, res, _, analyst) => {
 }));
 
 /* Bollinger Band sur période fixe */
-router.get('/bollingerband', withTicker((req, res, _, analyst) => {
+router.get('/:ticker/bollingerband', withTicker((req, res, _, analyst) => {
     res.status(200).json({ bollingerband: analyst.getBollingerBand(20) });
 }));
 

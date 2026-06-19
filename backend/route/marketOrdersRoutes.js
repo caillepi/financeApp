@@ -16,8 +16,8 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/getticker', async (req, res) => {
-    const { ticker } = req.query;
+router.get('/:ticker', async (req, res) => {
+    const { ticker } = req.params;
 
     try {
         if (ticker == null) {
