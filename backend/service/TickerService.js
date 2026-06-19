@@ -1,4 +1,5 @@
 const pool = require('../utils/bddClient');
+const { staticCache, dynamicCache } = require('../utils/cache');
 
 /**
  * Classe qui permet d'interagir avec la table 'ticker' de la BDD
@@ -6,16 +7,14 @@ const pool = require('../utils/bddClient');
 class TickerService {
     static async getAll() {
         try {
-            const { data, error } = await pool.from('ticker').select('*');
-    
-            // s'il y a une erreur
-            if (error) {
-                console.error('Erreur lors de la récupération des tickers')
-                throw new Error(error.message);
-            }
-
-            // si tout va bien
-            return data;
+            return await staticCache.getOrSet('ticker:all', async () => {
+                const { data, error } = await pool.from('ticker').select('*');
+                if (error) {
+                    console.error('Erreur lors de la récupération des tickers')
+                    throw new Error(error.message);
+                }
+                return data;
+            }, { ttl: null }); // static data: never expire by default
         }
         catch (err) {
             console.error("Erreur interne à getAllTickers : " + err);
@@ -25,14 +24,15 @@ class TickerService {
 
     static async getByCode(code) {
         try {
-            const { data, error } = await pool.from('ticker').select('*').eq('code', code);
-
-            if (error) {
-                console.error('Erreur lors de la récupération du ticker ' + code);
-                throw new Error(error.message);
-            }
-
-            return data;
+            const key = `ticker:code:${code}`;
+            return await staticCache.getOrSet(key, async () => {
+                const { data, error } = await pool.from('ticker').select('*').eq('code', code);
+                if (error) {
+                    console.error('Erreur lors de la récupération du ticker ' + code);
+                    throw new Error(error.message);
+                }
+                return data;
+            }, { ttl: null });
 
         }
         catch (err) {
@@ -60,6 +60,12 @@ class TickerService {
                 throw new Error(error.message);
             }
 
+            // invalider cache ticker (static)
+            try {
+                staticCache.invalidate('ticker:all');
+                staticCache.invalidate(`ticker:code:${ticker.getCode()}`);
+            } catch(e){}
+
             return data;
         }
         catch (err) {
@@ -77,6 +83,8 @@ class TickerService {
                 throw new Error(error.message);
             }
 
+            try { staticCache.invalidate('ticker:all'); } catch(e){}
+            staticCache.invalidate(`ticker:code:${code}`);
             return data;
         }
         catch (err) {
@@ -94,6 +102,8 @@ class TickerService {
                 throw new Error(error.message);
             }
 
+            try { staticCache.invalidate('ticker:all'); } catch(e){}
+            staticCache.invalidate(`ticker:code:${code}`);
             return data;
 
         }

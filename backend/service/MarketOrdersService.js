@@ -1,4 +1,5 @@
 const pool = require('../utils/bddClient');
+const { staticCache, dynamicCache } = require('../utils/cache');
 
 class MarketOrdersService {
 
@@ -7,14 +8,14 @@ class MarketOrdersService {
      */
     static async getAll() {
         try {
-            const { data, error } = await pool.from('market_orders').select('*');
-
-            if (error) {
-                console.error('Erreur lors de la récupération des market_orders');
-                throw new Error(error.message);
-            }
-
-            return data;
+            return await dynamicCache.getOrSet('market_orders:all', async () => {
+                const { data, error } = await pool.from('market_orders').select('*');
+                if (error) {
+                    console.error('Erreur lors de la récupération des market_orders');
+                    throw new Error(error.message);
+                }
+                return data;
+            }, { ttl: 1000 * 60 * 60 }); // dynamique: 1 heure
         }
         catch (err) {
             console.error('Erreur interne à getAll : ', err);
@@ -27,17 +28,18 @@ class MarketOrdersService {
      */
     static async getByCode(code) {
         try {
-            const { data, error } = await pool
-                .from('market_orders')
-                .select('*')
-                .eq('code_ticker', code);
-
-            if (error) {
-                console.error('Erreur lors de la récupération des market_orders pour ' + code);
-                throw new Error(error.message);
-            }
-
-            return data;
+            const key = `market_orders:code:${code}`;
+            return await dynamicCache.getOrSet(key, async () => {
+                const { data, error } = await pool
+                    .from('market_orders')
+                    .select('*')
+                    .eq('code_ticker', code);
+                if (error) {
+                    console.error('Erreur lors de la récupération des market_orders pour ' + code);
+                    throw new Error(error.message);
+                }
+                return data;
+            }, { ttl: 1000 * 60 * 60 });
         }
         catch (err) {
             console.error('Erreur interne à getByCode : ', err);
@@ -54,18 +56,19 @@ class MarketOrdersService {
             const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
             const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
-            const { data, error } = await pool
-                .from('market_orders')
-                .select('*')
-                .gte('created_at', startOfDay.toISOString())
-                .lte('created_at', endOfDay.toISOString());
-
-            if (error) {
-                console.error('Erreur lors de la récupération des market_orders pour la date ' + date);
-                throw new Error(error.message);
-            }
-
-            return data;
+            const key = `market_orders:date:${date}`;
+            return await dynamicCache.getOrSet(key, async () => {
+                const { data, error } = await pool
+                    .from('market_orders')
+                    .select('*')
+                    .gte('created_at', startOfDay.toISOString())
+                    .lte('created_at', endOfDay.toISOString());
+                if (error) {
+                    console.error('Erreur lors de la récupération des market_orders pour la date ' + date);
+                    throw new Error(error.message);
+                }
+                return data;
+            }, { ttl: 1000 * 60 * 60 });
         }
         catch (err) {
             console.error('Erreur interne à getByDate : ', err);
@@ -82,19 +85,20 @@ class MarketOrdersService {
             const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
             const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
-            const { data, error } = await pool
-                .from('market_orders')
-                .select('*')
-                .eq('code_ticker', code)
-                .gte('created_at', startOfDay.toISOString())
-                .lte('created_at', endOfDay.toISOString());
-
-            if (error) {
-                console.error(`Erreur lors de la récupération des market_orders pour ${code} à la date ${date}`);
-                throw new Error(error.message);
-            }
-
-            return data;
+            const key = `market_orders:code:${code}:date:${date}`;
+            return await dynamicCache.getOrSet(key, async () => {
+                const { data, error } = await pool
+                    .from('market_orders')
+                    .select('*')
+                    .eq('code_ticker', code)
+                    .gte('created_at', startOfDay.toISOString())
+                    .lte('created_at', endOfDay.toISOString());
+                if (error) {
+                    console.error(`Erreur lors de la récupération des market_orders pour ${code} à la date ${date}`);
+                    throw new Error(error.message);
+                }
+                return data;
+            }, { ttl: 1000 * 60 * 60 });
         }
         catch (err) {
             console.error('Erreur interne à getByCodeAndDate : ', err);
@@ -115,6 +119,19 @@ class MarketOrdersService {
                 console.error('Erreur lors de l\'ajout du market_order pour ' + marketOrder.code_ticker);
                 throw new Error(error.message);
             }
+
+            // invalider cache lié (dynamic)
+            try {
+                dynamicCache.invalidate('market_orders:all');
+                if (marketOrder.code_ticker) dynamicCache.invalidate(`market_orders:code:${marketOrder.code_ticker}`);
+                if (marketOrder.created_at) {
+                    const d = new Date(marketOrder.created_at);
+                    const dateKey = d.toISOString().slice(0,10);
+                    dynamicCache.invalidate(`market_orders:date:${dateKey}`);
+                    dynamicCache.invalidate(`market_orders:code:${marketOrder.code_ticker}:date:${dateKey}`);
+                }
+            }
+            catch(e){/* best-effort */}
 
             return data;
         }
@@ -147,6 +164,15 @@ class MarketOrdersService {
                 throw new Error(error.message);
             }
 
+            // invalider cache lié (dynamic)
+            try {
+                dynamicCache.invalidate('market_orders:all');
+                dynamicCache.invalidate(`market_orders:code:${code}`);
+                const dateKey = new Date(date).toISOString().slice(0,10);
+                dynamicCache.invalidate(`market_orders:date:${dateKey}`);
+                dynamicCache.invalidate(`market_orders:code:${code}:date:${dateKey}`);
+            } catch(e){}
+
             return data;
         }
         catch (err) {
@@ -170,6 +196,8 @@ class MarketOrdersService {
                 throw new Error(error.message);
             }
 
+            // invalider cache global (on ne sait pas quels enregistrements ont changé)
+            try { dynamicCache.invalidate('market_orders:all'); } catch(e){}
             return data;
         }
         catch (err) {

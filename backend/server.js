@@ -21,7 +21,10 @@ const enterpriseRouter = require('./route/enterpriseRoutes.js');
 const analystRouter = require('./route/analystRoutes.js');
 const tickersExplorerRouter = require('./route/tickersExplorerRoutes.js');
 const screenerRouter = require('./route/screenerRoutes.js');
+const cacheDebugRouter = require('./route/cacheDebugRoutes.js');
 const { isAuthenticated } = require('./middleware/sessionProtection.js');
+// cache in-memory pour réduire les appels DB (config via variables d'environnement)
+require('./utils/cache');
 
 // middleware
 app.use(cors({
@@ -55,6 +58,7 @@ app.use('/marketOrders', isAuthenticated, marketOrdersRouter);
 app.use('/marketTrades', isAuthenticated, marketTradesRouter);
 app.use('/tickersExplore', isAuthenticated, tickersExplorerRouter);
 app.use('/screener', isAuthenticated, screenerRouter);
+app.use('/debug/cache', cacheDebugRouter);
 
 /**
  * Lancer le serveur
@@ -62,3 +66,6 @@ app.use('/screener', isAuthenticated, screenerRouter);
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
 });
+
+// Le cache est initialisé automatiquement et peut être configuré via les variables d'environnement :
+// CACHE_DEFAULT_TTL_MS et CACHE_CLEANUP_INTERVAL_MS

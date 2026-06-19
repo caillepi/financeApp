@@ -1,13 +1,14 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { addTickerScore, getCurrent, getDescription, getKpiBollinger, getKpiMacd,
+import { addTickerScore, getCurrent, getDescription, getLow, getHigh, getLastOpen, getLastClose, getKpiBollinger, getKpiMacd,
     getKpiRsi, getKpiSma, getSector, getTickersScoreWithDay} from "../utils/requests";
 import { getDay, getYesterday } from "../utils/day";
 import { computeScore } from "../utils/score";
 import { useAuthentification } from "./useAuthentication";
 
-const CACHE_DATA_KEY = "reportDataCache";
-//const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 1 jour par exemple
-const CACHE_TTL_MS = 1000; // 1 seconde par exemple
+const STATIC_CACHE_KEY = "reportStaticCache";
+const DYNAMIC_CACHE_KEY = "reportDynamicCache";
+const DYNAMIC_CACHE_TTL_MS = 1000 * 60 * 60; // 1 heure par exemple
+// const CACHE_TTL_MS = 1000; // 1 seconde par exemple
 
 export const ReportDataContext = createContext({
     reportData: null,
@@ -25,37 +26,42 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
     const [offset, setOffset] = useState(0);
     const { isAuthenticated } = useAuthentification();
     const isFetchingRef = useRef(false);                // eviter de charger plusieurs fois le même ticker
-    const cacheRef = useRef({
-        date: null,                 // date de la donnée
-        tickersListSnapshot: [],    // copie brute de tickersList
-        data: []                    // données enrichie pour l'affichage dans la tableau
+    const staticCacheRef = useRef({
+        date: null,
+        tickersListSnapshot: [],
+        data: {} // map code -> { name, sector, description, is_active }
+    });
+
+    const dynamicCacheRef = useRef({
+        // per-code dynamic entries with timestamp
+        data: {} // map code -> { current, sma, bollinger, macd, rsi, score, timestamp }
     });
 
     useEffect(() => {
-        const storedCache = localStorage.getItem(CACHE_DATA_KEY);
-
-        if (storedCache) {
-            try {
-                const parsed = JSON.parse(storedCache);
-                const now = Date.now();
-                if (!parsed.timestamp || now - parsed.timestamp > CACHE_TTL_MS) {
-                    localStorage.removeItem(CACHE_DATA_KEY);
-                } else {
-                    cacheRef.current = parsed.data;
-                }
-            } catch (err) {
-                console.error("Erreur lecture cache localStorage", err);
+        try {
+            const storedStatic = localStorage.getItem(STATIC_CACHE_KEY);
+            if (storedStatic) {
+                staticCacheRef.current = JSON.parse(storedStatic);
             }
-        }
+        } catch (err) { console.error('Erreur lecture static cache', err); }
+
+        try {
+            const storedDynamic = localStorage.getItem(DYNAMIC_CACHE_KEY);
+            if (storedDynamic) {
+                dynamicCacheRef.current = JSON.parse(storedDynamic);
+            }
+        } catch (err) { console.error('Erreur lecture dynamic cache', err); }
     }, []);
 
     // Sauvegarde du cache à chaque modification
     const saveCache = () => {
         try {
-            localStorage.setItem(CACHE_DATA_KEY, JSON.stringify({data : cacheRef.current, timestamp: Date.now()}));
-        } catch (err) {
-            console.error("Erreur sauvegarde cache localStorage", err);
-        }
+            localStorage.setItem(STATIC_CACHE_KEY, JSON.stringify(staticCacheRef.current));
+        } catch (err) { console.error('Erreur sauvegarde static cache', err); }
+
+        try {
+            localStorage.setItem(DYNAMIC_CACHE_KEY, JSON.stringify(dynamicCacheRef.current));
+        } catch (err) { console.error('Erreur sauvegarde dynamic cache', err); }
     };
 
     // pour le premier chargement OU
@@ -74,7 +80,7 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
         // Si un code à changer entre la liste des tickers actuels et ce que l'on a enregistré dans la ref -> TRUE
         // sinon, pas de changement -> FALSE
         const tickersListChanged = (() => {
-            const cachedCodes = new Set(cacheRef.current.tickersListSnapshot.map(t => t.code));
+            const cachedCodes = new Set(staticCacheRef.current.tickersListSnapshot.map(t => t.code));
             const currentCodes = new Set(tickersList.map(t => t.code));
 
             if (cachedCodes.size !== currentCodes.size) return true;
@@ -86,12 +92,15 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
             return false;
         })();
         
-        if (!cacheRef.current.date || cacheRef.current.date !== today || tickersListChanged) {            
-            cacheRef.current = {
+        if (!staticCacheRef.current.date || staticCacheRef.current.date !== today || tickersListChanged) {
+            // reset static cache (we keep dynamic cache separate)
+            staticCacheRef.current = {
                 date: today,
                 tickersListSnapshot: [...tickersList],
-                data: []
+                data: {}
             };
+            // reset dynamic cache as well since ticker list changed
+            dynamicCacheRef.current = { data: {} };
             saveCache();
 
             setOffset(0);
@@ -124,67 +133,110 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                 // je parcours la liste des tickers dans tickersList
                 for (let i = offset; (i < offset + limit) && (i < tickersList.length); i++) {
                     const ticker = tickersList[i];
+                    // try to use separated caches: static + dynamic
+                    const staticEntry = staticCacheRef.current.data[ticker.code];
+                    const dynamicEntry = dynamicCacheRef.current.data[ticker.code];
+                    const now = Date.now();
+                    const dynamicValid = dynamicEntry && (now - (dynamicEntry.timestamp || 0) <= DYNAMIC_CACHE_TTL_MS);
 
-                    // si je trouve dans le cache le ticker en question
-                    let cachedTicker = cacheRef.current.data.find((t) => t.code === ticker.code);
-                    if (cachedTicker) {
-                        result.push(cachedTicker);
+                    // if both present and dynamic fresh, use them
+                    if (staticEntry && dynamicValid) {
+                        result.push({
+                            code: ticker.code,
+                            name: staticEntry.name || ticker.name,
+                            sector: staticEntry.sector,
+                            description: staticEntry.description,
+                            current: dynamicEntry.current,
+                            low: dynamicEntry.low,
+                            high: dynamicEntry.high,
+                            lastOpen: dynamicEntry.lastOpen,
+                            lastClose: dynamicEntry.lastClose,
+                            sma: dynamicEntry.sma,
+                            smaYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.mm ?? null,
+                            bollinger: dynamicEntry.bollinger,
+                            bollingerYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.bollinger ?? null,
+                            rsi: dynamicEntry.rsi,
+                            rsiYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.rsi ?? null,
+                            macd: dynamicEntry.macd,
+                            macdYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.macd ?? null,
+                            score: dynamicEntry.score,
+                            scoreYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.score ?? null,
+                            is_active: ticker.is_active
+                        });
                         continue;
                     }
 
-                    // si je ne trouve rien dans le cache
-                    // Je regarde dans la BDD s'il y a des données pour le ticker en question (aujourd'hui et hier)
-                    let tScoreToday = tickersScoreForTheDay.filter((elt) => elt.code == ticker.code)[0]
-                    let tScoreYesterday = tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0]
+                    // otherwise fetch missing parts
+                    const [dataCurrent, dataLow, dataHigh, dataLastOpen, dataLastClose, dataSector, dataDescription] = await Promise.all([
+                        getCurrent(ticker.code),
+                        getLow(ticker.code),
+                        getHigh(ticker.code),
+                        getLastOpen(ticker.code),
+                        getLastClose(ticker.code),
+                        staticEntry ? Promise.resolve(staticEntry.sector) : getSector(ticker.code),
+                        staticEntry ? Promise.resolve(staticEntry.description) : getDescription(ticker.code)
+                    ]);
 
-                    // variables pour mes données
-                    var dataKpiSma = null;
-                    var dataKpiBollinger = null;
-                    var dataKpiMacd = null;
-                    var dataKpiRsi = null;
-
-                    // les données dont j'ai besoin dans tous les cas 
-                    const [dataCurrent, dataSector, dataDescription]
-                        = await Promise.all([getCurrent(ticker.code), getSector(ticker.code), getDescription(ticker.code)]);
-
-                    // si on a trouvé un enregistrement dans la BDD du jour
-                    if (tScoreToday) {
-                        try {
-                            dataKpiSma = tScoreToday.mm;
-                            dataKpiBollinger = tScoreToday.bollinger;
-                            dataKpiMacd = tScoreToday.macd;
-                            dataKpiRsi = tScoreToday.rsi;
-                        }
-                        catch (err) {
-                            console.error(`Erreur lors du chargement des informations pour ${ticker.code}`, err);
-                        }
+                    // persist static info if missing
+                    if (!staticEntry) {
+                        staticCacheRef.current.data[ticker.code] = {
+                            name: ticker.name,
+                            sector: dataSector,
+                            description: dataDescription,
+                            is_active: ticker.is_active
+                        };
+                        staticCacheRef.current.tickersListSnapshot = [...tickersList];
+                        staticCacheRef.current.date = today;
                     }
 
-                    // S'il n'y a aucun enregistrement pour le ticker dans la BDD pour la date en question (journée)
-                    else {
+                    // dynamic KPIs: use DB scores if present otherwise compute via API
+                    let tScoreToday = tickersScoreForTheDay.filter((elt) => elt.code == ticker.code)[0];
+                    let dataKpiSma = null, dataKpiBollinger = null, dataKpiMacd = null, dataKpiRsi = null;
+                    if (tScoreToday) {
+                        dataKpiSma = tScoreToday.mm;
+                        dataKpiBollinger = tScoreToday.bollinger;
+                        dataKpiMacd = tScoreToday.macd;
+                        dataKpiRsi = tScoreToday.rsi;
+                    } else {
                         try {
-                            // récupération des données via l'API
                             dataKpiSma = await getKpiSma(ticker.code);
                             dataKpiBollinger = await getKpiBollinger(ticker.code);
                             dataKpiMacd = await getKpiMacd(ticker.code);
                             dataKpiRsi = await getKpiRsi(ticker.code);
-                        } 
-                        catch (error) {
+                        } catch (error) {
                             console.error(`Erreur lors du chargement des KPI pour ${ticker.code}`, error);
                         }
                     }
 
-                    // calcul du score du ticker
-                    let scoreComputed = computeScore(dataKpiSma, dataKpiMacd, dataKpiBollinger, dataKpiRsi);
+                    const scoreComputed = computeScore(dataKpiSma, dataKpiMacd, dataKpiBollinger, dataKpiRsi);
 
-                    // A cette etape, on a récupéré toutes les données nécessaires et disponibles à mon tableau pour mon ticker
+                    // store dynamic
+                    dynamicCacheRef.current.data[ticker.code] = {
+                        current: dataCurrent,
+                        low: dataLow,
+                        high: dataHigh,
+                        lastOpen: dataLastOpen,
+                        lastClose: dataLastClose,
+                        sma: dataKpiSma,
+                        bollinger: dataKpiBollinger,
+                        macd: dataKpiMacd,
+                        rsi: dataKpiRsi,
+                        score: scoreComputed,
+                        timestamp: Date.now()
+                    };
 
+                    // build final object
+                    const tScoreYesterday = tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0];
                     const tickerData = {
                         code: ticker.code,
-                        name: ticker.name,
-                        sector: dataSector,
-                        description: dataDescription,
+                        name: staticCacheRef.current.data[ticker.code].name || ticker.name,
+                        sector: staticCacheRef.current.data[ticker.code].sector,
+                        description: staticCacheRef.current.data[ticker.code].description,
                         current: dataCurrent,
+                        low: dataLow,
+                        high: dataHigh,
+                        lastOpen: dataLastOpen,
+                        lastClose: dataLastClose,
                         sma: dataKpiSma,
                         smaYesterday: tScoreYesterday?.mm ?? null,
                         bollinger: dataKpiBollinger,
@@ -198,21 +250,17 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                         is_active: ticker.is_active
                     };
 
-                    // ajout au tableau pour affichage
                     result.push(tickerData);
-                    // ajout au cache
-                    cacheRef.current.data.push(tickerData); 
-                    // sauvegarde dans le cache
                     saveCache();
 
-                    // enregistrement en BDD
+                    // enregistrement en BDD si nécessaire
                     if (!tScoreToday) {
-                        await addTickerScore(today, 
-                            ticker.code, 
-                            dataKpiSma, 
-                            dataKpiMacd, 
-                            dataKpiBollinger, 
-                            dataKpiRsi, 
+                        await addTickerScore(today,
+                            ticker.code,
+                            dataKpiSma,
+                            dataKpiMacd,
+                            dataKpiBollinger,
+                            dataKpiRsi,
                             scoreComputed);
                     }
                 }

@@ -60,6 +60,8 @@ function ResumeData () {
         kpiRsi
     } = data;
 
+    const safeDividend = dividend || { dividend: 'N/A', dividendRate: null };
+
     let delta = parseFloat(current - lastClose).toFixed(2);
     let isDeltaPositive = delta > 0;
 
@@ -104,7 +106,7 @@ function ResumeData () {
                 >
                     <ShowData label = "ouverture" data = {lastOpen} />
                     <ShowData label = "+ haut" data = {high} />
-                    <ShowData label = "dernier dividende" data = {dividend.dividend} />
+                        <ShowData label = "dernier dividende" data = {safeDividend.dividend ?? 'N/A'} />
                 </Grid>
 
                 {/* Right column */}
@@ -113,7 +115,7 @@ function ResumeData () {
                 >
                     <ShowData label = "clôture veille" data = {lastClose} />
                     <ShowData label = "+ bas" data = {low} />
-                    <ShowData label = "% dividende" data = {(dividend.dividendRate * 100).toFixed(2) ?? 'N/A'} />
+                    <ShowData label = "% dividende" data = {safeDividend.dividendRate !== null && safeDividend.dividendRate !== undefined ? (safeDividend.dividendRate * 100).toFixed(2) : 'N/A'} />
                 </Grid>
             </Grid>
 

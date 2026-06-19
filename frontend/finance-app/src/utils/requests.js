@@ -44,7 +44,11 @@ export async function getPrimaryInfo(ticker) {
 export async function getLastOpen(ticker) {
   const data = await apiCall(`/analyst/${ticker}/opendata`);
   if (data?.opendata === 'N/A') return null;
-  return data?.opendata ? parseFloat(data.opendata[data.opendata.length - 1].toFixed(2)) : null;
+  const openData = Array.isArray(data?.opendata) ? data.opendata : null;
+  if (!openData || openData.length === 0) return null;
+  const lastValue = openData[openData.length - 1];
+  if (lastValue === null || lastValue === undefined) return null;
+  return parseFloat(lastValue.toFixed ? lastValue.toFixed(2) : parseFloat(lastValue).toFixed(2));
 }
 
 export async function getOpenData(ticker) {
@@ -55,7 +59,11 @@ export async function getOpenData(ticker) {
 export async function getLastClose(ticker) {
   const data = await apiCall(`/analyst/${ticker}/closedata`);
   if (data?.closedata === 'N/A') return null;
-  return data?.closedata ? parseFloat(data.closedata[data.closedata.length - 2].toFixed(2)) : null;
+  const closeData = Array.isArray(data?.closedata) ? data.closedata : null;
+  if (!closeData || closeData.length < 2) return null;
+  const value = closeData[closeData.length - 2];
+  if (value === null || value === undefined) return null;
+  return parseFloat(value.toFixed ? value.toFixed(2) : parseFloat(value).toFixed(2));
 }
 
 export async function getCloseData(ticker) {

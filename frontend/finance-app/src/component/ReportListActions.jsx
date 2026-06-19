@@ -30,9 +30,6 @@ function ReportListActions ({handleReloadData, handleExportPDF, handleSendEmail}
                     Envoyer un email
                 </Button>
             </Grid>
-            <Grid>
-
-            </Grid>
         </Grid>
     </>
 }

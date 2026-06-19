@@ -3,6 +3,10 @@ const { withTicker } = require('../utils/routeUtils');
 const router = express.Router();
 
 
+router.get('/:ticker', withTicker((req, res, enterprise) => {
+    res.status(200).json({enterprise: enterprise});
+}));
+
 /* Renvoie le nom de l'entreprise */
 router.get('/:ticker/enterprisename', withTicker((req, res, enterprise) => {
     res.status(200).json({ name: enterprise.getName() });
