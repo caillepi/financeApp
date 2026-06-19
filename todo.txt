@@ -1,23 +1,50 @@
-P1 - Sauvegarde en ligne - github par exemple ?
-P1 - Comparaison "Consensus des analystes Bourso" Vs "Mon site"
-P1 - [Rapport] Export PDF trop gros / problème si j'exporte tout
-P1 - [Rapport] Pouvoir avoir les entreprises surlesquelles j'ai investis / faire un filtre
-P1 - [Exemple FDJ] - Problème avev le back end / récupération des données
-P1 - [Rapport] Si déjà présent dans le CSV alors on affiche direct
+﻿PRIORITÉ 1 - FONCTIONNALITÉS CRITIQUES ET CORRECTIONS
+- Clarifier et mettre à jour le calcul du score
+    * inclure le positionnement du cours par rapport aux moyennes mobiles ?
+    * inclure la dynamique des variations récentes du cours ?
+    * prévoir une évolution future du calcul du score
+- TESTER MY WALLET : vérifier chaque fonction une par une
+- Implémenter les boutons 'Acheter' / 'Vendre' et appliquer les filtres automatiquement sur la page rapport
+- Corriger le problème entre useTickerData et useReportData (double appel API)
+- Ajouter le rechargement automatique des données avec setInterval
+- Créer un endpoint unique comme GET /ticker/:code/full pour limiter les requêtes multiples
+- Résoudre le problème Michelin
+- Intégrer le dividende dans le score des entreprises
+- Créer une table User + documentation, et refondre la logique de login/back-end
+- Ajouter le support des univers boursiers (CAC 40, SRD, SBF 120...) avec une table de BDD pour chaque liste
+    * Top entreprises par score de la veille
+    * Meilleures et pires performances du jour
+    * Actions dans lesquelles j'ai investi
+    * Top entreprises attractives du dernier mois / de la veille
+    * Meilleurs dividendes
+- Récupérer les tickers avec averageAnalystRating = '1-2 - Buy' et comparer le consensus analystes avec les résultats du site
 
-P2 - Créer un top 10 des entreprises les plus attractives / les moins attractives...
-P2 - Intégration du dividende par entreprise
-P2 - Donner à intervalle de temps régulier la somme sur mon PEA pour pouvoir suivre son évolution
+PRIORITÉ 2 - AMÉLIORATIONS PRODUIT ET UX
+- Pouvoir ajouter ou supprimer des colonnes dans la page rapport (ajouter dividence, taux de dividende...) afin de choisir les critères qui me correspondent
+- Utiliser une API Mistral (ou équivalent) pour analyser une action : fondamental, technique, actualités
+- Utiliser TanStack Query pour éviter les doubles appels à l'API
+- Revoir la logique du ticker central : envisager une page /dashboard?ticker=...
+- Ajouter des alertes sur valeur cible d'une action (ex : notification quand une action atteint 20€)
+- Implémenter un système de favoris pour surveiller des actions et envoyer des notifications (mail, Discord, Messenger…)
+- Ajouter un bouton 'Acheter' / 'Vendre' sur la homepage pour le ticker affiché
+- Revoir la logique de stockage des rapports en base : conserver les anciennes données pendant réécriture
+- Corriger l'export PDF trop volumineux / le problème d'export de toutes les données
+- Calculer régulièrement la valeur totale du PEA et afficher l'évolution
+- Envoyer les ordres d'achat/vente via un message Discord ou Messenger (ou un autre canal)
 
-P3 - Faire un système de pagination également afin de limiter à 25 par exemple le nombre de tickers sur la page
-P3 - Faire une page avec les leçons à connaître (les types d'ordre, comment ça fonctionne, les heures de la bourse, mes objectifs...)
-P3 - [Rapport] Choisir les entreprises (s'il y a trop d'entreprises) que l'on veut charger dans un premier temps puis les autres dans un second temps
-    - ça doit se passer côté serveur
-    - sinon ajouter des arguments à l'url pour contrôler le backend
-P3 - Mettre en place un serveur qui calcule toutes les heures par exemple ces indicateurs et recevoir une notification si c'est le cas avec l'action à effectuer
-    (ok) Server Email en place
-    - créer un template (via une ref) seulement pour l'email (ou le rapport PDF)
-P3 - Gestion des erreurs (s'il n'y a plus internet (afficher un bandeau), si...)
-P3 - Voir l'évolution des scores en fonction du temps avec le tickersScore.csv
-P3 - Faire une vue "Mon portefeuille" (pouvoir ajouter le prix auquel on a acheté les actions, voir la performance...)
-P3 - Aperçu visuel du cours de l'indicateur
+PRIORITÉ 3 - STABILISATION ET AMÉLIORATIONS SUR LE LONG TERME
+- Ajouter la pagination pour limiter le nombre de tickers visibles (ex. 25 par page)
+- Créer une page d'aide/leçons : types d'ordre, fonctionnement, heures de la bourse, objectifs
+- Mettre en place un serveur de calcul périodique des indicateurs et déclencher des notifications/actions
+    * Server Email déjà en place
+    * Créer un template d'email / rapport PDF
+- Améliorer la gestion des erreurs : perte de connexion, erreurs API, etc.
+- Visualiser l'évolution des scores dans le temps via la BDD
+- Ajouter un aperçu visuel des indicateurs : score, RSI, moyennes mobiles, etc.
+
+PRIORITÉ FUTURE / À RÉÉVALUER
+- Mettre en ligne le site web
+    * garder en local sur un Raspberry Pi si nécessaire
+    * Dockeriser l’application uniquement après stabilisation du dev
+- Documenter l’utilisation de concurrently pour lancer front et back ensemble
+- Référence technique : https://github.com/gadicc/yahoo-finance2/blob/dev/docs/UPGRADING.md

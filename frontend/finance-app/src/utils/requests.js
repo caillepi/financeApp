@@ -2,124 +2,124 @@ import { apiCall } from './apiServices'; // Assure-toi que le chemin est correct
 
 // Fonctions spécifiques qui appellent apiCall
 export async function getEnterpriseName(ticker) {
-  const data = await apiCall('/enterprise/enterprisename', { ticker });
+  const data = await apiCall(`/enterprise/${ticker}/enterprisename`);
   return data.name;
 }
 
 export async function getCurrent(ticker) {
-  const data = await apiCall('/enterprise/current', { ticker });
+  const data = await apiCall(`/enterprise/${ticker}/current`);
   return data.current;
 }
 
 export async function getLow(ticker) {
-  const data = await apiCall('/enterprise/low', { ticker });
+  const data = await apiCall(`/enterprise/${ticker}/low`);
   return data.low;
 }
 
 export async function getHigh(ticker) {
-  const data = await apiCall('/enterprise/high', { ticker });
+  const data = await apiCall(`/enterprise/${ticker}/high`);
   return data.high;
 }
 
 export async function getSector(ticker) {
-  const data = await apiCall('/enterprise/sector', { ticker });
+  const data = await apiCall(`/enterprise/${ticker}/sector`);
   return data.sector;
 }
 
 export async function getDescription(ticker) {
-  const data = await apiCall('/enterprise/description', { ticker });
+  const data = await apiCall(`/enterprise/${ticker}/description`);
   return data.description;
 }
 
 export async function getDividend(ticker) {
-  const data = await apiCall('/enterprise/dividend', { ticker });
+  const data = await apiCall(`/enterprise/${ticker}/dividend`);
   return data; // dividend, dividendRate
 }
 
 export async function getPrimaryInfo(ticker) {
-  const data = await apiCall('/enterprise/primaryInfo', { ticker });
+  const data = await apiCall(`/enterprise/${ticker}/primaryInfo`);
   return data; // name, sector, industry, exchangeName, currency
 }
 
 export async function getLastOpen(ticker) {
-  const data = await apiCall('/analyst/opendata', { ticker });
+  const data = await apiCall(`/analyst/${ticker}/opendata`);
   if (data?.opendata === 'N/A') return null;
   return data?.opendata ? parseFloat(data.opendata[data.opendata.length - 1].toFixed(2)) : null;
 }
 
 export async function getOpenData(ticker) {
-  const data = await apiCall('/analyst/opendata', { ticker });
+  const data = await apiCall(`/analyst/${ticker}/opendata`);
   return data.opendata;
 }
 
 export async function getLastClose(ticker) {
-  const data = await apiCall('/analyst/closedata', { ticker });
+  const data = await apiCall(`/analyst/${ticker}/closedata`);
   if (data?.closedata === 'N/A') return null;
   return data?.closedata ? parseFloat(data.closedata[data.closedata.length - 2].toFixed(2)) : null;
 }
 
 export async function getCloseData(ticker) {
-  const data = await apiCall('/analyst/closedata', { ticker });
+  const data = await apiCall(`/analyst/${ticker}/closedata`);
   return data.closedata;
 }
 
 export async function getVolumeData(ticker) {
-  const data = await apiCall('/analyst/volumedata', { ticker });
+  const data = await apiCall(`/analyst/${ticker}/volumedata`);
   return data.volumedata;
 }
 
 export async function getMinData(ticker, period) {
-  const data = await apiCall('/analyst/mindata', { ticker, period });
+  const data = await apiCall(`/analyst/${ticker}/mindata`, { period });
   return data.mindata;
 }
 
 export async function getMaxData(ticker, period) {
-  const data = await apiCall('/analyst/maxdata', { ticker, period });
+  const data = await apiCall(`/analyst/${ticker}/maxdata`, { period });
   return data.maxdata;
 }
 
 export async function getMin(ticker, period) {
-  const data = await apiCall('/analyst/min', { ticker, period });
+  const data = await apiCall(`/analyst/${ticker}/min`, { period });
   return data.min;
 }
 
 export async function getMax(ticker, period) {
-  const data = await apiCall('/analyst/max', { ticker, period });
+  const data = await apiCall(`/analyst/${ticker}/max`, { period });
   return data.max;
 }
 
 export async function getDateData(ticker) {
-  const data = await apiCall('/analyst/date', { ticker });
+  const data = await apiCall(`/analyst/${ticker}/date`);
   return data.dates;
 }
 
 export async function getMean(ticker, period) {
-  const data = await apiCall('/analyst/mean', { ticker, period });
+  const data = await apiCall(`/analyst/${ticker}/mean`, { period });
   return data.mean;
 }
 
 export async function getSMA(period, ticker) {
-  const data = await apiCall('/analyst/sma', { ticker, period });
+  const data = await apiCall(`/analyst/${ticker}/sma`, { period });
   return data.sma;
 }
 
 export async function getRsi(ticker) {
-  const data = await apiCall('/analyst/rsi', { ticker });
+  const data = await apiCall(`/analyst/${ticker}/rsi`);
   return data.rsi;
 }
 
 export async function getMACD(ticker) {
-  const data = await apiCall('/analyst/macd', { ticker });
+  const data = await apiCall(`/analyst/${ticker}/macd`);
   return data.macd;
 }
 
 export async function getEMA(period, ticker) {
-  const data = await apiCall('/analyst/ema', { ticker, period });
+  const data = await apiCall(`/analyst/${ticker}/ema`, { period });
   return data.ema;
 }
 
 export async function getBollingerBand(ticker) {
-  const data = await apiCall('/analyst/bollingerband', { ticker });
+  const data = await apiCall(`/analyst/${ticker}/bollingerband`);
   return data.bollingerband;
 }
 
@@ -127,22 +127,22 @@ export async function getBollingerBand(ticker) {
  * Récupération des KPIs
  */
 export async function getKpiSma(ticker) {
-  const data = await apiCall('/kpi/sma', { ticker });
+  const data = await apiCall(`/kpi/${ticker}/sma`);
   return data.sma;
 }
 
 export async function getKpiBollinger(ticker) {
-  const data = await apiCall('/kpi/bollinger', { ticker });
+  const data = await apiCall(`/kpi/${ticker}/bollinger`);
   return data.bollinger;
 }
 
 export async function getKpiMacd(ticker) {
-  const data = await apiCall('/kpi/macd', { ticker });
+  const data = await apiCall(`/kpi/${ticker}/macd`);
   return data.macd;
 }
 
 export async function getKpiRsi(ticker) {
-  const data = await apiCall('/kpi/rsi', { ticker });
+  const data = await apiCall(`/kpi/${ticker}/rsi`);
   return data.rsi;
 }
 
@@ -174,7 +174,7 @@ export async function getTickersScore() {
 }
 
 export async function getTickersScoreWithTicker(code) {
-  const data = await apiCall('/tickersScore/getticker', { code });
+  const data = await apiCall(`/tickersScore/${code}`);
   return data.tickersScore;
 }
 
@@ -205,7 +205,7 @@ export async function getMarketOrders() {
 } 
 
 export async function getMarketOrdersByTicker(ticker) {
-  const data = await apiCall('/marketOrders/getticker', { ticker });
+  const data = await apiCall(`/marketOrders/${ticker}`);
   return data;
 }
 
@@ -237,7 +237,7 @@ export async function getMarketTrades() {
 }
 
 export async function getMarketTradesByTicker(ticker) {
-  const data = await apiCall('/marketTrades/getticker', { ticker });
+  const data = await apiCall(`/marketTrades/${ticker}`);
   return data;
 } 
 
