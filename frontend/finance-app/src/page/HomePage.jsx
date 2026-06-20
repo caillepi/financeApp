@@ -2,6 +2,7 @@ import GeneralChart from '../component/GeneralChart.jsx';
 import ResumeData from '../component/ResumeData.jsx';
 import ChartChooser from '../component/ChartChooser.jsx';
 import PeriodSwitcher from '../component/PeriodSwitcher.jsx';
+import DiscordTestButtons from '../component/DiscordTestButtons.jsx';
 import { useAuthentification } from '../hook/useAuthentication.jsx';
 import { useNavigation } from '../hook/useNavigation.jsx';
 import { useEffect } from 'react';
@@ -37,6 +38,7 @@ function HomePage () {
                             <Stack gap={2}>
                                 <PeriodSwitcher />
                                 <ChartChooser />
+                                <DiscordTestButtons />
                             </Stack>
                         </>
                     }

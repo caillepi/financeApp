@@ -22,6 +22,7 @@ const analystRouter = require('./route/analystRoutes.js');
 const tickersExplorerRouter = require('./route/tickersExplorerRoutes.js');
 const screenerRouter = require('./route/screenerRoutes.js');
 const cacheDebugRouter = require('./route/cacheDebugRoutes.js');
+const discordRouter = require('./route/discordRoutes.js');
 const { isAuthenticated } = require('./middleware/sessionProtection.js');
 // cache in-memory pour réduire les appels DB (config via variables d'environnement)
 require('./utils/cache');
@@ -59,6 +60,7 @@ app.use('/marketTrades', isAuthenticated, marketTradesRouter);
 app.use('/tickersExplore', isAuthenticated, tickersExplorerRouter);
 app.use('/screener', isAuthenticated, screenerRouter);
 app.use('/debug/cache', cacheDebugRouter);
+app.use('/discord', discordRouter);
 
 /**
  * Lancer le serveur
