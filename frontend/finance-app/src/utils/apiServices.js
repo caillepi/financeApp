@@ -16,14 +16,23 @@ export async function apiCall(url, params = null, method = 'GET') {
       config.data = params;
     }
 
-    const response = await axios(config); 
+    const response = await axios(config);
+    const responseData = response?.data;
 
-    response.data.status = response?.status;
-    return response.data;
+    if (responseData && typeof responseData === 'object') {
+      responseData.status = response?.status;
+      return responseData;
+    }
+
+    return {
+      status: response?.status,
+      data: responseData
+    };
 
   } catch (err) {
     const status = err.response?.status;
-    const data = err.response?.data || {};
+    const data = err.response?.data;
+    const responseData = data && typeof data === 'object' ? data : {};
 
     if (status === 401) {
       console.log('Utilisateur non authentifié, redirection vers /login');
@@ -34,7 +43,8 @@ export async function apiCall(url, params = null, method = 'GET') {
     }
 
     // Ajoute le statut à l'objet d'erreur renvoyé
-    data.status = status || 500;
-    return data; // Retourne l'objet d'erreur formaté
+    responseData.status = status || 500;
+    responseData.data = responseData.data ?? data;
+    return responseData; // Retourne l'objet d'erreur formaté
   }
 }
