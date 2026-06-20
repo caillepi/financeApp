@@ -31,6 +31,7 @@ class Bourse {
         this.sector = await this.getSector();
         this.dividend = 0;
         this.history = await this.getHistory();
+        this.analyst = await this.getAverageAnalystRating();
     }
 
     async getData() {
@@ -99,12 +100,16 @@ class Bourse {
         }
     }
 
-    async getExchangeName() {
-        return this.data.fullExchangeName || 'N/A';
+    getExchangeName() {
+        return this.data?.fullExchangeName || 'N/A';
     }
 
-    async getCurrency() {
-        return this.data.currency || 'N/A';
+    getCurrency() {
+        return this.data?.currency || 'N/A';
+    }
+
+    getAverageAnalystRating() {
+        return this.data?.averageAnalystRating || 'N/A';
     }
 
     async getHistory() {

@@ -3,7 +3,8 @@ import { getCurrent, getDividend, getEnterpriseName, getHigh,
     getLastClose, getLastOpen, getLow, getMax, getMin, 
     getKpiBollinger, getKpiMacd, getKpiRsi, getKpiSma, 
     getSector,
-    getDescription} 
+    getDescription,
+    getAverageAnalystRating} 
     from "../utils/requests";
 
 export function useTickerData (ticker, period) {
@@ -55,6 +56,7 @@ export function useTickerData (ticker, period) {
                         min: cachedDynamic.min,
                         max: cachedDynamic.max,
                         dividend: cachedDynamic.dividend,
+                        averageAnalystRating: cachedDynamic.averageAnalystRating,
                         kpiSma: cachedDynamic.sma,
                         kpiBollinger: cachedDynamic.bollinger,
                         kpiMacd: cachedDynamic.macd,
@@ -85,6 +87,7 @@ export function useTickerData (ticker, period) {
                     mapIndex.min = reqs.push(getMin(ticker, period)) - 1;
                     mapIndex.max = reqs.push(getMax(ticker, period)) - 1;
                     mapIndex.dividend = reqs.push(getDividend(ticker)) - 1;
+                    mapIndex.averageAnalystRating = reqs.push(getAverageAnalystRating(ticker)) - 1;
                     mapIndex.kpiSma = reqs.push(getKpiSma(ticker)) - 1;
                     mapIndex.kpiBollinger = reqs.push(getKpiBollinger(ticker)) - 1;
                     mapIndex.kpiMacd = reqs.push(getKpiMacd(ticker)) - 1;
@@ -105,6 +108,7 @@ export function useTickerData (ticker, period) {
                 const min = dynamicValid ? cachedDynamic.min : (responses[mapIndex.min] || null);
                 const max = dynamicValid ? cachedDynamic.max : (responses[mapIndex.max] || null);
                 const dividend = dynamicValid ? cachedDynamic.dividend : (responses[mapIndex.dividend] || null);
+                const averageAnalystRating = dynamicValid ? cachedDynamic.averageAnalystRating : (responses[mapIndex.averageAnalystRating] || null);
                 const kpiSma = dynamicValid ? cachedDynamic.sma : (responses[mapIndex.kpiSma] || null);
                 const kpiBollinger = dynamicValid ? cachedDynamic.bollinger : (responses[mapIndex.kpiBollinger] || null);
                 const kpiMacd = dynamicValid ? cachedDynamic.macd : (responses[mapIndex.kpiMacd] || null);
@@ -122,6 +126,7 @@ export function useTickerData (ticker, period) {
                     min,
                     max,
                     dividend,
+                    averageAnalystRating,
                     kpiSma,
                     kpiBollinger,
                     kpiMacd,
@@ -153,6 +158,7 @@ export function useTickerData (ticker, period) {
                         min,
                         max,
                         dividend,
+                        averageAnalystRating,
                         sma: kpiSma,
                         bollinger: kpiBollinger,
                         macd: kpiMacd,

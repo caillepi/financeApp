@@ -54,6 +54,7 @@ function ResumeData () {
         lastOpen,
         lastClose,
         dividend,
+        averageAnalystRating,
         kpiSma,
         kpiBollinger,
         kpiMacd,
@@ -129,6 +130,7 @@ function ResumeData () {
                 >
                     <ShowData label = "Moyenne mobile" data = {kpiSma} />
                     <ShowData label = "RSI" data = {kpiRsi} />
+                    <ShowData label = "Analyst Rating" data = {averageAnalystRating} />
                 </Grid>
 
                 {/* Right column */}
