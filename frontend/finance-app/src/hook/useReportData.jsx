@@ -159,7 +159,7 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                             rsiYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.rsi ?? null,
                             macd: dynamicEntry.macd,
                             macdYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.macd ?? null,
-                            analystRating: dynamicEntry.analystRating,
+                            averageAnalystRating: dynamicEntry.averageAnalystRating,
                             score: dynamicEntry.score,
                             scoreYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.score ?? null,
                             is_active: ticker.is_active
@@ -168,7 +168,7 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                     }
 
                     // otherwise fetch missing parts
-                    const [dataCurrent, dataLow, dataHigh, dataLastOpen, dataLastClose, dataSector, dataDescription, dataAnalystRating] = await Promise.all([
+                    const [dataCurrent, dataLow, dataHigh, dataLastOpen, dataLastClose, dataSector, dataDescription, dataAverageAnalystRating] = await Promise.all([
                         getCurrent(ticker.code),
                         getLow(ticker.code),
                         getHigh(ticker.code),
@@ -223,7 +223,7 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                         bollinger: dataKpiBollinger,
                         macd: dataKpiMacd,
                         rsi: dataKpiRsi,
-                        analystRating: dataAnalystRating,
+                        averageAnalystRating: dataAverageAnalystRating,
                         score: scoreComputed,
                         timestamp: Date.now()
                     };
@@ -248,7 +248,7 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                         rsiYesterday: tScoreYesterday?.rsi ?? null,
                         macd: dataKpiMacd,
                         macdYesterday: tScoreYesterday?.macd ?? null,
-                        analystRating: dataAnalystRating,
+                        averageAnalystRating: dataAverageAnalystRating,
                         score: scoreComputed,
                         scoreYesterday: tScoreYesterday?.score ?? null,
                         is_active: ticker.is_active
