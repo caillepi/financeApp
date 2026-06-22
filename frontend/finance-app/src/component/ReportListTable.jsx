@@ -84,12 +84,16 @@ function ReportListTable ({data, setData, setSortConfig}) {
                     <th className="reportlist-th" style={{ width: "6%" }} onClick={() => handleSort('bollinger')}>Bollinger Band</th>
                     <th className="reportlist-th" style={{ width: "6%" }} onClick={() => handleSort('rsi')}>RSI</th>
                     <th className="reportlist-th" style={{ width: "3%" }} onClick={() => handleSort('score')}>Note Globale</th>
+                    <th className="reportlist-th" style={{ width: "3%" }} onClick={() => handleSort('analystRating')}>Analyst Rating</th>
                 </tr>
             </thead>
             <tbody>
                 {
                     data.map((row, index) => {
                         {/* S'il y a eu un problème lors du chargement des données */}
+                        if (row.code == 'ML.PA') {
+                            row.sector = 'Consumer Cyclical';
+                        }
                         if (row.sector === 'N/A') {
                             return (
                                 <tr key={row.code}>
@@ -114,6 +118,7 @@ function ReportListTable ({data, setData, setSortConfig}) {
                                         </div>
                                     </td>
                                     <td className="reportlist-td red">{row.code}</td>
+                                    <td className="reportlist-td">{'-'}</td>
                                     <td className="reportlist-td">{'-'}</td>
                                     <td className="reportlist-td">{'-'}</td>
                                     <td className="reportlist-td">{'-'}</td>
@@ -154,6 +159,7 @@ function ReportListTable ({data, setData, setSortConfig}) {
                                 <td className="reportlist-td">{row.bollinger} ({row.bollingerYesterday})</td>
                                 <td className="reportlist-td">{row.rsi} ({row.rsiYesterday})</td>
                                 <td className="reportlist-td">{row.score} ({row.scoreYesterday})</td>
+                                <td className="reportlist-td">{row.averageAnalystRating}</td>
                             </tr>
                         )
                     })
