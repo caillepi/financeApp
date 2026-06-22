@@ -154,10 +154,10 @@ function ReportListTable ({data, setData, setSortConfig}) {
                                 <td className="reportlist-td">{row.code}</td>
                                 <td className="reportlist-td">{row.sector}</td>
                                 <td className="reportlist-td">{row.current}</td>
-                                <td className="reportlist-td">{row.sma} ({row.smaYesterday})</td>
-                                <td className="reportlist-td">{row.macd} ({row.macdYesterday})</td>
-                                <td className="reportlist-td">{row.bollinger} ({row.bollingerYesterday})</td>
-                                <td className="reportlist-td">{row.rsi} ({row.rsiYesterday})</td>
+                                <td className="reportlist-td">{Math.round(row.sma * 100) / 100} ({row.smaYesterday})</td>
+                                <td className="reportlist-td">{Math.round(row.macd * 100) / 100} ({row.macdYesterday})</td>
+                                <td className="reportlist-td">{Math.round(row.bollinger * 100) / 100} ({row.bollingerYesterday})</td>
+                                <td className="reportlist-td">{Math.round(row.rsi * 100) / 100} ({row.rsiYesterday})</td>
                                 <td className="reportlist-td">{row.score} ({row.scoreYesterday})</td>
                                 <td className="reportlist-td">{row.averageAnalystRating}</td>
                             </tr>

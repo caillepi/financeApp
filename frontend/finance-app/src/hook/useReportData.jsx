@@ -24,6 +24,7 @@ export function useReportData() {
 export function ReportDataContextProvider ({children, tickersList, reloadProp = false, limit = 1}) {
     const [reportData, setReportData] = useState([]);
     const [offset, setOffset] = useState(0);
+    const [cacheReady, setCacheReady] = useState(false);
     const { isAuthenticated } = useAuthentification();
     const isFetchingRef = useRef(false);                // eviter de charger plusieurs fois le même ticker
     const staticCacheRef = useRef({
@@ -36,6 +37,44 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
         // per-code dynamic entries with timestamp
         data: {} // map code -> { current, sma, bollinger, macd, rsi, score, timestamp }
     });
+
+    const isDynamicEntryValid = (dynamicEntry) => {
+        return dynamicEntry && (Date.now() - (dynamicEntry.timestamp || 0) <= DYNAMIC_CACHE_TTL_MS);
+    };
+
+    const buildCachedReportData = () => {
+        if (!tickersList.length) return [];
+
+        return tickersList.map((ticker) => {
+            const staticEntry = staticCacheRef.current.data[ticker.code];
+            const dynamicEntry = dynamicCacheRef.current.data[ticker.code];
+            if (!isDynamicEntryValid(dynamicEntry)) return null;
+
+            return {
+                code: ticker.code,
+                name: staticEntry?.name || ticker.name,
+                sector: staticEntry?.sector || null,
+                description: staticEntry?.description || null,
+                current: dynamicEntry.current,
+                low: dynamicEntry.low,
+                high: dynamicEntry.high,
+                lastOpen: dynamicEntry.lastOpen,
+                lastClose: dynamicEntry.lastClose,
+                sma: dynamicEntry.sma,
+                bollinger: dynamicEntry.bollinger,
+                macd: dynamicEntry.macd,
+                rsi: dynamicEntry.rsi,
+                averageAnalystRating: dynamicEntry.averageAnalystRating,
+                score: dynamicEntry.score,
+                smaYesterday: null,
+                bollingerYesterday: null,
+                rsiYesterday: null,
+                macdYesterday: null,
+                scoreYesterday: null,
+                is_active: ticker.is_active
+            };
+        }).filter(Boolean);
+    };
 
     useEffect(() => {
         try {
@@ -51,7 +90,20 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                 dynamicCacheRef.current = JSON.parse(storedDynamic);
             }
         } catch (err) { console.error('Erreur lecture dynamic cache', err); }
+
+        setCacheReady(true);
     }, []);
+
+    useEffect(() => {
+        if (!cacheReady) return;
+        if (!tickersList.length) return;
+        if (reportData.length > 0) return;
+
+        const cachedReportData = buildCachedReportData();
+        if (cachedReportData.length > 0) {
+            setReportData(cachedReportData);
+        }
+    }, [cacheReady, tickersList, reportData.length]);
 
     // Sauvegarde du cache à chaque modification
     const saveCache = () => {

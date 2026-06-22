@@ -58,14 +58,16 @@ function CloseData({ dateData, min, max }) {
             }
         }, [period]);
 
+    const safeDateData = Array.isArray(dateData) ? dateData : [];
+
     // Indices filtrés
     const filteredIndices = useMemo(() => {
-        if (!startDate || dateData == 'N/A') return [];
+        if (!startDate || !safeDateData.length) return [];
 
-        return dateData
+        return safeDateData
             .map((dateStr, i) => DateTime.fromISO(dateStr) >= startDate ? i : -1)
             .filter(i => i !== -1);
-    }, [startDate, dateData]);
+    }, [startDate, safeDateData]);
 
     const minIndex = useMemo(() => {
         return filteredIndices.length ? Math.min(...filteredIndices) : 0;
@@ -78,8 +80,8 @@ function CloseData({ dateData, min, max }) {
         sma50: sma50.slice(minIndex),
         sma100: sma100.slice(minIndex),
         sma200: sma200.slice(minIndex),
-        dates: dateData.slice(minIndex)
-    }), [close, sma20, sma50, sma100, sma200, dateData, minIndex]);
+        dates: safeDateData.slice(minIndex)
+    }), [close, sma20, sma50, sma100, sma200, safeDateData, minIndex]);
 
     // Structure des datasets
     const data = {
@@ -186,7 +188,7 @@ function CloseData({ dateData, min, max }) {
         },
     };
 
-    if (dateData.length === 0 || close.length === 0) {
+    if (safeDateData.length === 0 || close.length === 0) {
         return <div>Chargement des données...</div>;
     }
 
