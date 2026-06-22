@@ -64,6 +64,11 @@ router.get('/:ticker/currency', withTicker(async (req, res, enterprise) => {
     res.status(200).json({ currency });
 }));
 
+router.get('/:ticker/averageAnalystRating', withTicker(async (req, res, enterprise) => {
+    const analystRating = await enterprise.getAverageAnalystRating();
+    res.status(200).json({ analystRating });
+}));
+
 router.get('/:ticker/primaryInfo', withTicker(async (req, res, enterprise) => {
     const name = await enterprise.getName();
     const sector = await enterprise.getSector();

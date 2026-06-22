@@ -36,6 +36,11 @@ export async function getDividend(ticker) {
   return data; // dividend, dividendRate
 }
 
+export async function getAverageAnalystRating(ticker) {
+  const data = await apiCall(`/enterprise/${ticker}/averageAnalystRating`);
+  return data.analystRating;
+}
+
 export async function getPrimaryInfo(ticker) {
   const data = await apiCall(`/enterprise/${ticker}/primaryInfo`);
   return data; // name, sector, industry, exchangeName, currency

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { addTickerScore, getCurrent, getDescription, getLow, getHigh, getLastOpen, getLastClose, getKpiBollinger, getKpiMacd,
-    getKpiRsi, getKpiSma, getSector, getTickersScoreWithDay} from "../utils/requests";
+    getKpiRsi, getKpiSma, getSector, getTickersScoreWithDay, getAverageAnalystRating} from "../utils/requests";
 import { getDay, getYesterday } from "../utils/day";
 import { computeScore } from "../utils/score";
 import { useAuthentification } from "./useAuthentication";
@@ -159,6 +159,7 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                             rsiYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.rsi ?? null,
                             macd: dynamicEntry.macd,
                             macdYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.macd ?? null,
+                            averageAnalystRating: dynamicEntry.averageAnalystRating,
                             score: dynamicEntry.score,
                             scoreYesterday: (tickersScoreForYesterday.filter((elt) => elt.code == ticker.code)[0])?.score ?? null,
                             is_active: ticker.is_active
@@ -167,14 +168,15 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                     }
 
                     // otherwise fetch missing parts
-                    const [dataCurrent, dataLow, dataHigh, dataLastOpen, dataLastClose, dataSector, dataDescription] = await Promise.all([
+                    const [dataCurrent, dataLow, dataHigh, dataLastOpen, dataLastClose, dataSector, dataDescription, dataAverageAnalystRating] = await Promise.all([
                         getCurrent(ticker.code),
                         getLow(ticker.code),
                         getHigh(ticker.code),
                         getLastOpen(ticker.code),
                         getLastClose(ticker.code),
                         staticEntry ? Promise.resolve(staticEntry.sector) : getSector(ticker.code),
-                        staticEntry ? Promise.resolve(staticEntry.description) : getDescription(ticker.code)
+                        staticEntry ? Promise.resolve(staticEntry.description) : getDescription(ticker.code),
+                        getAverageAnalystRating(ticker.code)
                     ]);
 
                     // persist static info if missing
@@ -221,6 +223,7 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                         bollinger: dataKpiBollinger,
                         macd: dataKpiMacd,
                         rsi: dataKpiRsi,
+                        averageAnalystRating: dataAverageAnalystRating,
                         score: scoreComputed,
                         timestamp: Date.now()
                     };
@@ -245,6 +248,7 @@ export function ReportDataContextProvider ({children, tickersList, reloadProp = 
                         rsiYesterday: tScoreYesterday?.rsi ?? null,
                         macd: dataKpiMacd,
                         macdYesterday: tScoreYesterday?.macd ?? null,
+                        averageAnalystRating: dataAverageAnalystRating,
                         score: scoreComputed,
                         scoreYesterday: tScoreYesterday?.score ?? null,
                         is_active: ticker.is_active
