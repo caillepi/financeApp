@@ -41,9 +41,14 @@ build
 
 # npm logs
 npm-debug.log
+todo.txt
 
 # coverage (tests)
 coverage
 
 # git
 .gitconfig
+
+# supabase
+supabase
+supabase-project
