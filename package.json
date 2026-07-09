@@ -3,6 +3,7 @@
     "front": "cd frontend/finance-app && npm run dev",
     "back": "cd backend && node server.js",
     "backdev": "cd backend && nodemon server.js",
+    "build-front": "cd frontend/finance-app && npm run build",
     "supabase": "npx supabase start",
     "dev": "concurrently --names \"FRONT,BACK\" --prefix-colors \"cyan,green\" \"npm run front\" \"npm run backdev\""
   },
