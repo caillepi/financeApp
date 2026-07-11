@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
-import CustomContainer from "../component/ui/customcontainer";
+import CustomContainer from "../component/ui/CustomContainer";
 import { Grid, Typography } from "@mui/material";
 
 function LoginPage () {
