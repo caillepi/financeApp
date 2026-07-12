@@ -8,6 +8,7 @@ const session = require('express-session');
 // intialisation de l'application express
 const app = express();
 const port = process.env.PORT || 5000;
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 var cors = require('cors');
 
 // import des routes
@@ -27,9 +28,10 @@ const { isAuthenticated } = require('./middleware/sessionProtection.js');
 // cache in-memory pour réduire les appels DB (config via variables d'environnement)
 require('./utils/cache');
 
+
 // middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: frontendUrl,
   credentials: true, 
 }));
 app.use(express.json());
