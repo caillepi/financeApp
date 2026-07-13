@@ -49,20 +49,20 @@ app.use(session({
 }));
 
 // routes publiques
-app.use('/session', sessionRouter);
+app.use('/api/session', sessionRouter);
 
 // routes authentifiées
-app.use('/enterprise', isAuthenticated, enterpriseRouter);
-app.use('/analyst', isAuthenticated, analystRouter);
-app.use('/kpi', isAuthenticated, kpiRouter);
-app.use('/tickers', isAuthenticated, tickersRouter);
-app.use('/tickersScore', isAuthenticated, tickersScoreRouter);
-app.use('/marketOrders', isAuthenticated, marketOrdersRouter);
-app.use('/marketTrades', isAuthenticated, marketTradesRouter);
-app.use('/tickersExplore', isAuthenticated, tickersExplorerRouter);
-app.use('/screener', isAuthenticated, screenerRouter);
-app.use('/debug/cache', cacheDebugRouter);
-app.use('/discord', discordRouter);
+app.use('/api/enterprise', isAuthenticated, enterpriseRouter);
+app.use('/api/analyst', isAuthenticated, analystRouter);
+app.use('/api/kpi', isAuthenticated, kpiRouter);
+app.use('/api/tickers', isAuthenticated, tickersRouter);
+app.use('/api/tickersScore', isAuthenticated, tickersScoreRouter);
+app.use('/api/marketOrders', isAuthenticated, marketOrdersRouter);
+app.use('/api/marketTrades', isAuthenticated, marketTradesRouter);
+app.use('/api/tickersExplore', isAuthenticated, tickersExplorerRouter);
+app.use('/api/screener', isAuthenticated, screenerRouter);
+app.use('/api/debug/cache', cacheDebugRouter);
+app.use('/api/discord', discordRouter);
 
 /**
  * Lancer le serveur
