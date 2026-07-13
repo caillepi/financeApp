@@ -15,7 +15,7 @@ function DiscordTestButtons() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = 'http://localhost:5000';
+  const API_BASE = (import.meta.env.VITE_API_URL?.trim() || '').replace(/\/$/, '') + '/api';
 
   const buyRecommendations = useMemo(() => {
     const threshold = Number(minBuyScore);

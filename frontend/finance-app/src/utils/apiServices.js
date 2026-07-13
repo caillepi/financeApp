@@ -1,9 +1,19 @@
 import axios from 'axios'
 
+function getApiBaseUrl() {
+  const configuredUrl = import.meta.env.VITE_API_URL?.trim();
+
+  if (!configuredUrl) {
+    return '/api';
+  }
+
+  return configuredUrl.replace(/\/$/, '') + '/api';
+}
+
 // Cette fonction prendra en charge la gestion des appels API et la redirection
 export async function apiCall(url, params = null, method = 'GET') {
   try {
-    const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const apiBaseUrl = getApiBaseUrl();
     const config = {
       method,
       url: apiBaseUrl + url,

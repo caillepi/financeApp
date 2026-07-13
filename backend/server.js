@@ -8,8 +8,13 @@ const session = require('express-session');
 // intialisation de l'application express
 const app = express();
 const port = process.env.PORT || 5000;
-const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-var cors = require('cors');
+const cors = require('cors');
+const defaultOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+const configuredOrigins = (process.env.CORS_ORIGIN || process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((value) => value.trim())
+  .filter(Boolean);
+const allowedOrigins = [...new Set([...defaultOrigins, ...configuredOrigins])];
 
 // import des routes
 const sessionRouter = require('./route/sessionRoutes.js');
@@ -31,8 +36,15 @@ require('./utils/cache');
 
 // middleware
 app.use(cors({
-  origin: frontendUrl,
-  credentials: true, 
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`Origin ${origin} not allowed by CORS`), false);
+  },
+  credentials: true,
 }));
 app.use(express.json());
 
