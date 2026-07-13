@@ -3,9 +3,10 @@ import axios from 'axios'
 // Cette fonction prendra en charge la gestion des appels API et la redirection
 export async function apiCall(url, params = null, method = 'GET') {
   try {
+    const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     const config = {
       method,
-      url: import.meta.env.VITE_API_URL + url,
+      url: apiBaseUrl + url,
       withCredentials: true,
     };
 
